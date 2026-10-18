@@ -1,0 +1,95 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icone from '../../components/Icone.astro';
+import { configuracoes, eventos, formatarData, renderMarkdoc, linkWhatsApp } from '../../lib/conteudo';
+
+export async function getStaticPaths() {
+  return (await eventos()).map((e) => ({ params: { slug: e.slug }, props: { evento: e.entry } }));
+}
+
+const { evento } = Astro.props;
+const config = await configuracoes();
+const descricao = renderMarkdoc((await evento.descricao()).node);
+const dataLonga = formatarData(evento.data!, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+---
+<Base titulo={evento.titulo} descricao={evento.resumo || `${evento.titulo} — ${dataLonga}`} imagem={evento.imagem ?? undefined}>
+  <article>
+    <header class="cabecalho-pagina">
+      <div class="container">
+        <a href="/eventos" class="voltar">← Todos os eventos</a>
+        <h1>{evento.titulo}</h1>
+        <ul class="detalhes">
+          <li><Icone nome="calendario" /> <span class="capitalizar">{dataLonga}</span></li>
+          {evento.horario && <li><Icone nome="relogio" /> {evento.horario}</li>}
+          <li><Icone nome="local" /> {evento.local || config.nome}</li>
+        </ul>
+      </div>
+    </header>
+    <div class="secao">
+      <div class="container corpo">
+        {evento.imagem && <img src={evento.imagem} alt={`Cartaz: ${evento.titulo}`} class="cartaz" />}
+        <div>
+          {evento.resumo && <p class="resumo">{evento.resumo}</p>}
+          <div class="texto-rico" set:html={descricao} />
+          {
+            config.whatsapp && (
+              <a class="botao" href={linkWhatsApp(config.whatsapp, `Olá! Quero saber mais sobre o evento "${evento.titulo}".`)} target="_blank" rel="noopener">
+                Tirar dúvidas pelo WhatsApp
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .voltar {
+    display: inline-block;
+    margin-bottom: 16px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .detalhes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    color: var(--tinta-suave);
+    font-size: 1.1rem;
+  }
+  .detalhes li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .detalhes :global(svg) {
+    color: var(--vermelho);
+  }
+  .capitalizar::first-letter {
+    text-transform: uppercase;
+  }
+  .corpo {
+    display: grid;
+    gap: 32px;
+    align-items: start;
+  }
+  @media (min-width: 860px) {
+    .corpo:has(.cartaz) {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 48px;
+    }
+  }
+  .cartaz {
+    width: 100%;
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
+  }
+  .resumo {
+    font-size: 1.25rem;
+    font-family: var(--fonte-titulo);
+  }
+</style>

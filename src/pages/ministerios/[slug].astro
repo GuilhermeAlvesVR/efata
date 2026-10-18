@@ -1,0 +1,96 @@
+---
+import Base from '../../layouts/Base.astro';
+import { configuracoes, ministerios, renderMarkdoc, linkWhatsApp } from '../../lib/conteudo';
+
+export async function getStaticPaths() {
+  return (await ministerios()).map((m) => ({ params: { slug: m.slug }, props: { ministerio: m.entry } }));
+}
+
+const { ministerio } = Astro.props;
+const config = await configuracoes();
+const descricao = renderMarkdoc((await ministerio.descricao()).node);
+const temFicha = Boolean(ministerio.imagem || ministerio.lider || ministerio.encontros);
+---
+<Base titulo={ministerio.nome} descricao={ministerio.resumo} imagem={ministerio.imagem ?? undefined}>
+  <article>
+    <header class="cabecalho-pagina">
+      <div class="container">
+        <a href="/ministerios" class="voltar">← Todos os ministérios</a>
+        <h1>{ministerio.nome}</h1>
+        {ministerio.resumo && <p>{ministerio.resumo}</p>}
+      </div>
+    </header>
+    <div class="secao">
+      <div class="container corpo">
+        <div>
+          <div class="texto-rico" set:html={descricao} />
+          {
+            config.whatsapp && (
+              <a class="botao" href={linkWhatsApp(config.whatsapp, `Olá! Quero participar do ministério ${ministerio.nome}.`)} target="_blank" rel="noopener">
+                Quero participar
+              </a>
+            )
+          }
+        </div>
+        {
+          temFicha && (
+            <aside class="ficha">
+              {ministerio.imagem && <img src={ministerio.imagem} alt="" />}
+              {(ministerio.lider || ministerio.encontros) && (
+                <dl>
+                  {ministerio.lider && (<><dt>Liderança</dt><dd>{ministerio.lider}</dd></>)}
+                  {ministerio.encontros && (<><dt>Encontros</dt><dd>{ministerio.encontros}</dd></>)}
+                </dl>
+              )}
+            </aside>
+          )
+        }
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .voltar {
+    display: inline-block;
+    margin-bottom: 16px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .corpo {
+    display: grid;
+    gap: 32px;
+    align-items: start;
+  }
+  @media (min-width: 860px) {
+    .corpo:has(.ficha) {
+      grid-template-columns: 1.4fr 0.6fr;
+      gap: 48px;
+    }
+  }
+  .ficha {
+    background: var(--branco);
+    border: 1px solid var(--linha);
+    border-radius: var(--raio);
+    overflow: hidden;
+  }
+  .ficha img {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+  .ficha dl {
+    margin: 0;
+    padding: 20px;
+  }
+  .ficha dt {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--vermelho);
+  }
+  .ficha dd {
+    margin: 2px 0 14px;
+  }
+</style>

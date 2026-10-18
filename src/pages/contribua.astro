@@ -1,0 +1,132 @@
+---
+import QRCode from 'qrcode';
+import Base from '../layouts/Base.astro';
+import { reader, codigoPix } from '../lib/conteudo';
+
+const dados = await reader.singletons.contribua.read();
+const chave = dados?.pixChave?.trim() ?? '';
+const pix = chave ? codigoPix(chave, dados?.pixNome ?? '', dados?.pixCidade ?? '') : '';
+const qr = pix ? await QRCode.toString(pix, { type: 'svg', margin: 1, color: { dark: '#1b1817', light: '#ffffff' } }) : '';
+---
+<Base titulo="Contribua" descricao="Dízimos e ofertas: contribua com a obra pelo Pix.">
+  <header class="cabecalho-pagina">
+    <div class="container">
+      <span class="sobretitulo">Dízimos e ofertas</span>
+      <h1>Contribua</h1>
+      <p>“Cada um dê conforme determinou em seu coração, não com pesar ou por obrigação, pois Deus ama quem dá com alegria.” — 2 Coríntios 9:7</p>
+    </div>
+  </header>
+
+  <section class="secao">
+    <div class="container contribua">
+      <div>
+        {dados?.texto && <p class="intro">{dados.texto}</p>}
+        {
+          dados?.banco && (
+            <div class="banco">
+              <h2>Transferência bancária</h2>
+              <p>{dados.banco}</p>
+            </div>
+          )
+        }
+      </div>
+
+      {
+        pix ? (
+          <div class="pix cartao">
+            <h2>Pix</h2>
+            <div class="pix__qr" set:html={qr} role="img" aria-label="QR Code do Pix" />
+            <p class="pix__rotulo">Chave Pix</p>
+            <p class="pix__chave">{chave}</p>
+            {dados?.pixNome && <p class="pix__nome">{dados.pixNome}</p>}
+            <button class="botao" type="button" data-copiar={pix}>
+              Copiar código Pix
+            </button>
+            <p class="pix__dica">Abra o app do seu banco, escolha Pix e leia o QR Code ou use “Pix copia e cola”.</p>
+          </div>
+        ) : (
+          <div class="pix cartao">
+            <h2>Pix</h2>
+            <p class="vazio">Dados do Pix em breve.</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copiar]').forEach((botao) => {
+    const original = botao.textContent;
+    botao.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(botao.dataset.copiar ?? '');
+        botao.textContent = 'Código copiado!';
+      } catch {
+        botao.textContent = 'Não foi possível copiar';
+      }
+      setTimeout(() => (botao.textContent = original), 2500);
+    });
+  });
+</script>
+
+<style>
+  .contribua {
+    display: grid;
+    gap: 32px;
+    align-items: start;
+  }
+  @media (min-width: 860px) {
+    .contribua {
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 48px;
+    }
+  }
+  .intro {
+    font-family: var(--fonte-titulo);
+    font-size: 1.35rem;
+    line-height: 1.45;
+    white-space: pre-line;
+  }
+  .banco {
+    margin-top: 32px;
+    padding: 24px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio);
+    background: var(--branco);
+  }
+  .banco p {
+    white-space: pre-line;
+    margin: 0;
+  }
+  .pix {
+    padding: 28px;
+    text-align: center;
+  }
+  .pix__qr {
+    width: min(240px, 100%);
+    margin: 8px auto 20px;
+  }
+  .pix__rotulo {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--vermelho);
+    margin: 0;
+  }
+  .pix__chave {
+    font-size: 1.15rem;
+    font-weight: 700;
+    word-break: break-all;
+    margin: 0 0 4px;
+  }
+  .pix__nome {
+    color: var(--tinta-suave);
+  }
+  .pix__dica {
+    font-size: 0.9rem;
+    color: var(--tinta-suave);
+    margin: 16px 0 0;
+  }
+</style>

@@ -1,0 +1,31 @@
+---
+import Base from '../../layouts/Base.astro';
+import CardMinisterio from '../../components/CardMinisterio.astro';
+import { ministerios } from '../../lib/conteudo';
+
+const lista = await ministerios();
+---
+<Base titulo="Ministérios" descricao="Conheça os ministérios da igreja e encontre o seu lugar para servir.">
+  <header class="cabecalho-pagina">
+    <div class="container">
+      <span class="sobretitulo">Sirva conosco</span>
+      <h1>Ministérios</h1>
+      <p>Cada pessoa tem um dom. Encontre o seu lugar para servir e crescer em comunhão.</p>
+    </div>
+  </header>
+  <section class="secao">
+    <div class="container">
+      {
+        lista.length > 0 ? (
+          <div class="grade">
+            {lista.map(({ slug, entry }) => (
+              <CardMinisterio slug={slug} nome={entry.nome} resumo={entry.resumo} encontros={entry.encontros} imagem={entry.imagem} />
+            ))}
+          </div>
+        ) : (
+          <p class="vazio">Em breve.</p>
+        )
+      }
+    </div>
+  </section>
+</Base>

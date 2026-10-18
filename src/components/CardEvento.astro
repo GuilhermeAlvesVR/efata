@@ -1,0 +1,119 @@
+---
+import Icone from './Icone.astro';
+import { formatarData } from '../lib/conteudo';
+
+interface Props {
+  slug: string;
+  titulo: string;
+  data: string;
+  horario?: string;
+  local?: string;
+  imagem?: string | null;
+  resumo?: string;
+}
+const { slug, titulo, data, horario, local, imagem, resumo } = Astro.props;
+const dia = formatarData(data, { day: '2-digit' });
+const mes = formatarData(data, { month: 'short' }).replace('.', '');
+---
+<article class="cartao evento" data-evento-data={data}>
+  <a href={`/eventos/${slug}`} class="evento__link">
+    <div class="evento__midia">
+      {imagem ? <img src={imagem} alt="" loading="lazy" /> : <div class="evento__sem-imagem" aria-hidden="true" />}
+      <time class="evento__data" datetime={data}>
+        <span class="evento__dia">{dia}</span>
+        <span class="evento__mes">{mes}</span>
+      </time>
+    </div>
+    <div class="evento__corpo">
+      <h3>{titulo}</h3>
+      <p class="evento__info">
+        <Icone nome="calendario" tamanho={16} />
+        {formatarData(data, { weekday: 'long', day: 'numeric', month: 'long' })}{horario && ` · ${horario}`}
+      </p>
+      {
+        local && (
+          <p class="evento__info">
+            <Icone nome="local" tamanho={16} />
+            {local}
+          </p>
+        )
+      }
+      {resumo && <p class="evento__resumo">{resumo}</p>}
+    </div>
+  </a>
+</article>
+
+<style>
+  .evento__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+  }
+  .evento__link:hover h3 {
+    color: var(--vermelho);
+  }
+  .evento__midia {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--vermelho-claro);
+  }
+  .evento__midia img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .evento__sem-imagem {
+    height: 100%;
+    background:
+      radial-gradient(circle at 75% 30%, rgb(163 22 28 / 0.25), transparent 55%),
+      linear-gradient(135deg, var(--vermelho-claro), #fff);
+  }
+  .evento__data {
+    position: absolute;
+    left: 14px;
+    bottom: -22px;
+    display: grid;
+    place-items: center;
+    width: 60px;
+    padding: 6px 0;
+    background: var(--vermelho);
+    color: #fff;
+    border-radius: 10px;
+    line-height: 1;
+    box-shadow: var(--sombra);
+  }
+  .evento__dia {
+    font-family: var(--fonte-titulo);
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  .evento__mes {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+  }
+  .evento__corpo {
+    padding: 34px 20px 20px;
+  }
+  .evento__corpo h3 {
+    transition: color 0.15s;
+  }
+  .evento__info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--tinta-suave);
+    font-size: 0.95rem;
+    margin: 0 0 4px;
+  }
+  .evento__info:first-letter {
+    text-transform: uppercase;
+  }
+  .evento__resumo {
+    margin: 12px 0 0;
+    color: var(--tinta-suave);
+  }
+</style>

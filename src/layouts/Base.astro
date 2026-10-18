@@ -1,0 +1,113 @@
+---
+import '../styles/global.css';
+import { getImage } from 'astro:assets';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Icone from '../components/Icone.astro';
+import logo from '../assets/logo.jpeg';
+import { configuracoes, cultos, linkWhatsApp } from '../lib/conteudo';
+
+interface Props {
+  titulo?: string;
+  descricao?: string;
+  imagem?: string;
+}
+const config = await configuracoes();
+const { horarios } = await cultos();
+const { titulo, descricao = config.descricao, imagem } = Astro.props;
+
+const tituloCompleto = titulo
+  ? `${titulo} · ${config.nome}`
+  : `${config.nome}${config.slogan ? ` — ${config.slogan}` : ''}`;
+const favicon = await getImage({ src: logo, width: 64, height: 64, fit: 'cover', format: 'png' });
+const iconeApple = await getImage({ src: logo, width: 180, height: 180, fit: 'cover', format: 'png' });
+const imagemPadrao = await getImage({ src: logo, width: 630, format: 'jpg' });
+const base = Astro.site ?? Astro.url;
+const imagemOg = new URL(imagem ?? imagemPadrao.src, base).href;
+const canonica = new URL(Astro.url.pathname, base).href;
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloCompleto}</title>
+    {descricao && <meta name="description" content={descricao} />}
+    <link rel="canonical" href={canonica} />
+    <link rel="icon" type="image/png" href={favicon.src} />
+    <link rel="apple-touch-icon" href={iconeApple.src} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#a3161c" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content={config.nome} />
+    <meta property="og:title" content={tituloCompleto} />
+    {descricao && <meta property="og:description" content={descricao} />}
+    <meta property="og:url" content={canonica} />
+    <meta property="og:image" content={imagemOg} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+    <Header nome={config.nome} />
+    <main id="conteudo">
+      <slot />
+    </main>
+    <Footer config={config} horarios={horarios} />
+    {
+      config.whatsapp && (
+        <a
+          class="whatsapp-flutuante"
+          href={linkWhatsApp(config.whatsapp)}
+          target="_blank"
+          rel="noopener"
+          aria-label="Fale conosco pelo WhatsApp"
+        >
+          <Icone nome="whatsapp" tamanho={28} />
+        </a>
+      )
+    }
+  </body>
+</html>
+
+<style>
+  .pular {
+    position: absolute;
+    left: 16px;
+    top: -60px;
+    z-index: 100;
+    background: var(--tinta);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 8px;
+  }
+  .pular:focus {
+    top: 12px;
+  }
+  .whatsapp-flutuante {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 40;
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: #1fa855;
+    color: #fff;
+    box-shadow: 0 6px 20px rgb(0 0 0 / 0.25);
+  }
+  .whatsapp-flutuante:hover {
+    color: #fff;
+    background: #188a45;
+  }
+</style>

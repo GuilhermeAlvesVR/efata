@@ -1,0 +1,190 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.jpeg';
+
+interface Props {
+  nome: string;
+}
+const { nome } = Astro.props;
+const atual = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+const links = [
+  { href: '/', texto: 'Início' },
+  { href: '/sobre', texto: 'Quem somos' },
+  { href: '/cultos', texto: 'Cultos' },
+  { href: '/eventos', texto: 'Eventos' },
+  { href: '/ministerios', texto: 'Ministérios' },
+  { href: '/mensagens', texto: 'Mensagens' },
+  { href: '/contribua', texto: 'Contribua' },
+];
+const ativo = (href: string) => (href === '/' ? atual === '/' : atual.startsWith(href));
+---
+<header class="topo">
+  <div class="container topo__barra">
+    <a href="/" class="marca">
+      <Image src={logo} alt="" width={96} height={96} class="marca__logo" loading="eager" />
+      <span class="marca__nome">{nome}</span>
+    </a>
+    <button class="menu-botao" aria-expanded="false" aria-controls="menu-principal">
+      <span class="visualmente-oculto">Abrir menu</span>
+      <span class="menu-botao__linhas" aria-hidden="true"></span>
+    </button>
+    <nav id="menu-principal" class="menu" aria-label="Principal">
+      <ul>
+        {
+          links.map((l) => (
+            <li>
+              <a href={l.href} aria-current={ativo(l.href) ? 'page' : undefined}>
+                {l.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const botao = document.querySelector<HTMLButtonElement>('.menu-botao')!;
+  const menu = document.getElementById('menu-principal')!;
+  botao.addEventListener('click', () => {
+    const aberto = botao.getAttribute('aria-expanded') === 'true';
+    botao.setAttribute('aria-expanded', String(!aberto));
+    menu.classList.toggle('menu--aberto', !aberto);
+  });
+</script>
+
+<style>
+  .topo {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(255 255 255 / 0.94);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--linha);
+  }
+  .topo__barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 68px;
+  }
+  .marca {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--tinta);
+    text-decoration: none;
+    min-width: 0;
+  }
+  .marca__logo {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--linha);
+    flex-shrink: 0;
+  }
+  .marca__nome {
+    font-family: var(--fonte-titulo);
+    font-weight: 600;
+    font-size: 1.15rem;
+    line-height: 1.1;
+  }
+  .menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 4px;
+  }
+  .menu a {
+    display: block;
+    padding: 8px 12px;
+    border-radius: 999px;
+    color: var(--tinta-suave);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.97rem;
+  }
+  .menu a:hover {
+    color: var(--tinta);
+    background: var(--papel);
+  }
+  .menu a[aria-current='page'] {
+    color: var(--vermelho);
+    background: var(--vermelho-claro);
+  }
+  .menu-botao {
+    display: none;
+  }
+
+  @media (max-width: 960px) {
+    .menu-botao {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--linha);
+      border-radius: 10px;
+      background: var(--branco);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .menu-botao__linhas,
+    .menu-botao__linhas::before,
+    .menu-botao__linhas::after {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--tinta);
+      border-radius: 2px;
+      position: relative;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .menu-botao__linhas::before,
+    .menu-botao__linhas::after {
+      content: '';
+      position: absolute;
+    }
+    .menu-botao__linhas::before {
+      top: -6px;
+    }
+    .menu-botao__linhas::after {
+      top: 6px;
+    }
+    [aria-expanded='true'] .menu-botao__linhas {
+      background: transparent;
+    }
+    [aria-expanded='true'] .menu-botao__linhas::before {
+      transform: translateY(6px) rotate(45deg);
+    }
+    [aria-expanded='true'] .menu-botao__linhas::after {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+    .menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--branco);
+      border-bottom: 1px solid var(--linha);
+      box-shadow: var(--sombra);
+    }
+    .menu--aberto {
+      display: block;
+    }
+    .menu ul {
+      flex-direction: column;
+      padding: 8px 16px 16px;
+    }
+    .menu a {
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 1.05rem;
+    }
+  }
+</style>

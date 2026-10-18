@@ -1,0 +1,129 @@
+---
+import Base from '../layouts/Base.astro';
+import { reader, lideranca, renderMarkdoc } from '../lib/conteudo';
+
+const sobre = await reader.singletons.sobre.read();
+const historia = sobre ? renderMarkdoc((await sobre.texto()).node) : '';
+const lideres = await lideranca();
+---
+<Base titulo={sobre?.titulo || 'Quem somos'} descricao={sobre?.missao}>
+  <header class="cabecalho-pagina">
+    <div class="container">
+      <span class="sobretitulo">Nossa história</span>
+      <h1>{sobre?.titulo || 'Quem somos'}</h1>
+    </div>
+  </header>
+
+  {
+    (sobre?.missao || sobre?.visao) && (
+      <section class="secao secao--branca">
+        <div class="container pilares">
+          {sobre?.missao && (
+            <div class="pilar">
+              <span class="sobretitulo">Missão</span>
+              <p>{sobre.missao}</p>
+            </div>
+          )}
+          {sobre?.visao && (
+            <div class="pilar">
+              <span class="sobretitulo">Visão</span>
+              <p>{sobre.visao}</p>
+            </div>
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    historia && (
+      <section class="secao">
+        <div class="container">
+          <div class="texto-rico" set:html={historia} />
+        </div>
+      </section>
+    )
+  }
+
+  {
+    lideres.length > 0 && (
+      <section class="secao secao--branca">
+        <div class="container">
+          <span class="sobretitulo">Quem cuida da casa</span>
+          <h2>Liderança</h2>
+          <ul class="lideres">
+            {lideres.map(({ entry }) => (
+              <li class="lider">
+                {entry.foto ? (
+                  <img src={entry.foto} alt="" loading="lazy" />
+                ) : (
+                  <div class="lider__inicial" aria-hidden="true">
+                    {entry.nome.charAt(0)}
+                  </div>
+                )}
+                <h3>{entry.nome}</h3>
+                {entry.cargo && <p>{entry.cargo}</p>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .pilares {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  }
+  .pilar {
+    padding: 28px;
+    border: 1px solid var(--linha);
+    border-top: 4px solid var(--vermelho);
+    border-radius: var(--raio);
+    background: var(--papel);
+  }
+  .pilar p {
+    font-family: var(--fonte-titulo);
+    font-size: 1.3rem;
+    line-height: 1.4;
+    margin: 0;
+  }
+  .lideres {
+    list-style: none;
+    padding: 0;
+    margin: 28px 0 0;
+    display: grid;
+    gap: 32px 24px;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+  }
+  .lider {
+    text-align: center;
+  }
+  .lider img,
+  .lider__inicial {
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--vermelho-claro);
+  }
+  .lider__inicial {
+    display: grid;
+    place-items: center;
+    font-family: var(--fonte-titulo);
+    font-size: 3.5rem;
+    color: var(--vermelho);
+    background: var(--papel);
+  }
+  .lider h3 {
+    margin-bottom: 4px;
+  }
+  .lider p {
+    color: var(--tinta-suave);
+    margin: 0;
+  }
+</style>

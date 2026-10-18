@@ -1,0 +1,53 @@
+---
+import Icone from './Icone.astro';
+
+interface Props {
+  instagram?: string;
+  youtube?: string;
+  facebook?: string;
+}
+const { instagram, youtube, facebook } = Astro.props;
+const redes = [
+  { url: instagram, nome: 'instagram', rotulo: 'Instagram' },
+  { url: youtube, nome: 'youtube', rotulo: 'YouTube' },
+  { url: facebook, nome: 'facebook', rotulo: 'Facebook' },
+] as const;
+---
+<ul class="redes">
+  {
+    redes
+      .filter((r) => r.url)
+      .map((r) => (
+        <li>
+          <a href={r.url} target="_blank" rel="noopener" aria-label={r.rotulo}>
+            <Icone nome={r.nome} tamanho={22} />
+          </a>
+        </li>
+      ))
+  }
+</ul>
+
+<style>
+  .redes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 10px;
+  }
+  .redes a {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    color: inherit;
+    opacity: 0.85;
+  }
+  .redes a:hover {
+    opacity: 1;
+    color: inherit;
+    background: rgb(127 127 127 / 0.15);
+  }
+</style>

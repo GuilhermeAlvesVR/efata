@@ -1,0 +1,102 @@
+---
+import Base from '../layouts/Base.astro';
+import ListaCultos from '../components/ListaCultos.astro';
+import Mapa from '../components/Mapa.astro';
+import Icone from '../components/Icone.astro';
+import Redes from '../components/Redes.astro';
+import { configuracoes, cultos, linkWhatsApp } from '../lib/conteudo';
+
+const config = await configuracoes();
+const { horarios, observacao } = await cultos();
+---
+<Base titulo="Cultos e localização" descricao={`Horários de culto e endereço do ${config.nome}.`}>
+  <header class="cabecalho-pagina">
+    <div class="container">
+      <span class="sobretitulo">Venha nos visitar</span>
+      <h1>Cultos e localização</h1>
+      <p>Será uma alegria receber você e sua família.</p>
+    </div>
+  </header>
+
+  <section class="secao">
+    <div class="container">
+      <h2>Horários</h2>
+      <ListaCultos horarios={horarios} />
+      {observacao && <p class="observacao">{observacao}</p>}
+    </div>
+  </section>
+
+  <section class="secao secao--branca">
+    <div class="container local">
+      <div>
+        <h2>Onde estamos</h2>
+        {
+          config.endereco ? (
+            <p class="contato">
+              <Icone nome="local" />
+              <span>{config.endereco}</span>
+            </p>
+          ) : (
+            <p class="vazio">Endereço em breve.</p>
+          )
+        }
+        {
+          config.whatsapp && (
+            <p class="contato">
+              <Icone nome="whatsapp" />
+              <a href={linkWhatsApp(config.whatsapp)} target="_blank" rel="noopener">
+                Fale conosco pelo WhatsApp
+              </a>
+            </p>
+          )
+        }
+        {
+          config.email && (
+            <p class="contato">
+              <Icone nome="email" />
+              <a href={`mailto:${config.email}`}>{config.email}</a>
+            </p>
+          )
+        }
+        <h3 class="siga">Siga a gente</h3>
+        <Redes instagram={config.instagram} youtube={config.youtube} facebook={config.facebook} />
+      </div>
+      {config.endereco && <div><Mapa endereco={config.endereco} /></div>}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .observacao {
+    margin-top: 20px;
+    color: var(--tinta-suave);
+  }
+  .local {
+    display: grid;
+    gap: 32px;
+  }
+  @media (min-width: 860px) {
+    .local {
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 48px;
+    }
+  }
+  .contato {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 1.1rem;
+    white-space: pre-line;
+  }
+  .contato :global(svg) {
+    flex-shrink: 0;
+    margin-top: 4px;
+    color: var(--vermelho);
+  }
+  .siga {
+    margin-top: 32px;
+  }
+  .local :global(.redes) {
+    color: var(--tinta);
+  }
+</style>

@@ -1,0 +1,8 @@
+horarios:
+  - dia: quarta
+    hora: 19h30
+    nome: Culto de quarta
+  - dia: domingo
+    hora: 19h
+    nome: Culto de domingo
+observacao: Os cultos também são transmitidos ao vivo no nosso canal do YouTube.

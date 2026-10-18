@@ -1,0 +1,321 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import ListaCultos from '../components/ListaCultos.astro';
+import CardEvento from '../components/CardEvento.astro';
+import CardMinisterio from '../components/CardMinisterio.astro';
+import VideoYouTube from '../components/VideoYouTube.astro';
+import OrganizaEventos from '../components/OrganizaEventos.astro';
+import logo from '../assets/logo.jpeg';
+import { configuracoes, cultos, eventos, mensagens, ministerios, reader, formatarData, hojeISO, DIAS_CURTOS } from '../lib/conteudo';
+
+const config = await configuracoes();
+const { horarios } = await cultos();
+const sobre = await reader.singletons.sobre.read();
+const hoje = hojeISO();
+const proximos = (await eventos()).filter((e) => e.entry.data! >= hoje).slice(0, 6);
+const ultimaMensagem = (await mensagens())[0];
+const listaMinisterios = (await ministerios()).slice(0, 3);
+---
+<Base>
+  <section class="hero">
+    <div class="container hero__grade">
+      <div class="hero__texto">
+        <span class="sobretitulo">Bem-vindo à nossa casa</span>
+        <h1>{config.nome}</h1>
+        {config.slogan && <p class="hero__slogan">{config.slogan}</p>}
+        {
+          horarios.length > 0 && (
+            <p class="hero__cultos">
+              {horarios.map((h, i) => (
+                <>
+                  {i > 0 && <span aria-hidden="true"> · </span>}
+                  <span>
+                    <strong>{DIAS_CURTOS[h.dia]}</strong> {h.hora}
+                  </span>
+                </>
+              ))}
+            </p>
+          )
+        }
+        <div class="hero__acoes">
+          <a class="botao" href="/cultos">Venha nos visitar</a>
+          {config.youtube && <a class="botao botao--contorno" href={config.youtube} target="_blank" rel="noopener">Assista no YouTube</a>}
+        </div>
+      </div>
+      <div class="hero__imagem">
+        <Image src={logo} alt={`Logo do ${config.nome}: cruz com o sangue de Cristo sobre um coração em terra rachada`} width={520} loading="eager" />
+      </div>
+    </div>
+  </section>
+
+  {
+    sobre?.versiculo && (
+      <section class="versiculo">
+        <div class="container">
+          <blockquote>
+            <p>{sobre.versiculo}</p>
+            {sobre.referencia && <cite>{sobre.referencia}</cite>}
+          </blockquote>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="secao">
+    <div class="container">
+      <div class="secao__topo">
+        <div>
+          <span class="sobretitulo">Nossos encontros</span>
+          <h2>Horários de culto</h2>
+        </div>
+        <a class="link-seta" href="/cultos">Como chegar</a>
+      </div>
+      <ListaCultos horarios={horarios} />
+    </div>
+  </section>
+
+  <section class="secao secao--branca">
+    <div class="container">
+      <div class="secao__topo">
+        <div>
+          <span class="sobretitulo">Agenda</span>
+          <h2>Próximos eventos</h2>
+        </div>
+        <a class="link-seta" href="/eventos">Ver todos</a>
+      </div>
+      <div>
+        <div class="grade" data-lista-futuros data-limite="3">
+          {
+            proximos.map(({ slug, entry }) => (
+              <CardEvento
+                slug={slug}
+                titulo={entry.titulo}
+                data={entry.data!}
+                horario={entry.horario}
+                local={entry.local}
+                imagem={entry.imagem}
+                resumo={entry.resumo}
+              />
+            ))
+          }
+        </div>
+        <p class="vazio" data-vazio hidden={proximos.length > 0}>Nenhum evento agendado no momento. Acompanhe nosso Instagram!</p>
+      </div>
+    </div>
+  </section>
+
+  {
+    ultimaMensagem && (
+      <section class="secao">
+        <div class="container destaque-mensagem">
+          <div>
+            <span class="sobretitulo">Última mensagem</span>
+            <h2>{ultimaMensagem.entry.titulo}</h2>
+            <p class="destaque-mensagem__info">
+              {ultimaMensagem.entry.pregador}
+              {ultimaMensagem.entry.pregador && ultimaMensagem.entry.data && ' · '}
+              {ultimaMensagem.entry.data && formatarData(ultimaMensagem.entry.data)}
+            </p>
+            {ultimaMensagem.entry.resumo && <p>{ultimaMensagem.entry.resumo}</p>}
+            <a class="link-seta" href="/mensagens">Todas as mensagens</a>
+          </div>
+          <div class="destaque-mensagem__video">
+            <VideoYouTube url={ultimaMensagem.entry.youtube} titulo={ultimaMensagem.entry.titulo} />
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    listaMinisterios.length > 0 && (
+      <section class="secao secao--branca">
+        <div class="container">
+          <div class="secao__topo">
+            <div>
+              <span class="sobretitulo">Sirva conosco</span>
+              <h2>Ministérios</h2>
+            </div>
+            <a class="link-seta" href="/ministerios">Conheça todos</a>
+          </div>
+          <div class="grade">
+            {listaMinisterios.map(({ slug, entry }) => (
+              <CardMinisterio slug={slug} nome={entry.nome} resumo={entry.resumo} encontros={entry.encontros} imagem={entry.imagem} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="convite">
+    <div class="container convite__caixa">
+      <h2>Venha nos fazer uma visita</h2>
+      <p>Você é muito bem-vindo. Do jeito que você está.</p>
+      <div class="hero__acoes">
+        <a class="botao botao--branco" href="/cultos">Ver horários e endereço</a>
+        <a class="botao botao--contorno-branco" href="/contribua">Contribua</a>
+      </div>
+    </div>
+  </section>
+
+  <OrganizaEventos />
+</Base>
+
+<style>
+  .hero {
+    background: var(--branco);
+    border-bottom: 1px solid var(--linha);
+    overflow: hidden;
+  }
+  .hero__grade {
+    display: grid;
+    align-items: center;
+    gap: 16px;
+    padding-top: 40px;
+    padding-bottom: 32px;
+  }
+  @media (min-width: 860px) {
+    .hero__grade {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 48px;
+      padding-top: 24px;
+      padding-bottom: 0;
+    }
+  }
+  .hero h1 {
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    margin-bottom: 0.2em;
+  }
+  .hero__slogan {
+    font-family: var(--fonte-titulo);
+    font-style: italic;
+    font-size: clamp(1.3rem, 2.6vw, 1.75rem);
+    color: var(--vermelho);
+    margin-bottom: 1.2em;
+  }
+  .hero__cultos {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px 6px;
+    padding: 10px 16px;
+    border: 1px solid var(--linha);
+    border-radius: 999px;
+    background: var(--papel);
+    color: var(--tinta-suave);
+    margin-bottom: 1.6em;
+  }
+  .hero__cultos strong {
+    color: var(--tinta);
+  }
+  .hero__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .hero__imagem {
+    order: -1;
+    justify-self: center;
+    max-width: 260px;
+  }
+  @media (min-width: 860px) {
+    .hero__imagem {
+      order: 0;
+      max-width: 460px;
+      margin-bottom: -4px;
+    }
+  }
+
+  .versiculo {
+    background: var(--vermelho);
+    color: #fff;
+    padding: 48px 0;
+    text-align: center;
+  }
+  .versiculo blockquote {
+    margin: 0 auto;
+    max-width: 46ch;
+  }
+  .versiculo p {
+    font-family: var(--fonte-titulo);
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-style: italic;
+    line-height: 1.35;
+    margin-bottom: 0.6em;
+  }
+  .versiculo cite {
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    opacity: 0.85;
+  }
+
+  .destaque-mensagem {
+    display: grid;
+    gap: 28px;
+    align-items: center;
+  }
+  @media (min-width: 860px) {
+    .destaque-mensagem {
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 48px;
+    }
+  }
+  .destaque-mensagem__info {
+    color: var(--tinta-suave);
+    font-weight: 600;
+  }
+  .destaque-mensagem__video {
+    border-radius: var(--raio);
+    overflow: hidden;
+    box-shadow: var(--sombra);
+  }
+
+  .convite {
+    padding: 64px 0;
+  }
+  .convite__caixa {
+    text-align: center;
+  }
+  .convite__caixa > * {
+    max-width: 640px;
+    margin-inline: auto;
+  }
+  .convite__caixa {
+    background: var(--tinta);
+    color: #fff;
+    border-radius: 20px;
+    padding: 48px 24px;
+    max-width: calc(var(--largura) - 48px);
+  }
+  .convite__caixa p {
+    color: #d8d1cd;
+    font-size: 1.15rem;
+  }
+  .convite .hero__acoes {
+    justify-content: center;
+  }
+  .botao--branco {
+    background: #fff;
+    border-color: #fff;
+    color: var(--tinta);
+  }
+  .botao--branco:hover {
+    background: var(--vermelho-claro);
+    border-color: var(--vermelho-claro);
+    color: var(--tinta);
+  }
+  .botao--contorno-branco {
+    background: transparent;
+    border-color: #fff;
+    color: #fff;
+  }
+  @media (max-width: 640px) {
+    .convite {
+      padding: 40px 16px;
+    }
+  }
+</style>

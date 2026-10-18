@@ -1,0 +1,58 @@
+---
+import Base from '../../layouts/Base.astro';
+import CardEvento from '../../components/CardEvento.astro';
+import OrganizaEventos from '../../components/OrganizaEventos.astro';
+import { eventos, hojeISO } from '../../lib/conteudo';
+
+const hoje = hojeISO();
+const todos = await eventos();
+const futuros = todos.filter((e) => e.entry.data! >= hoje);
+const passados = todos.filter((e) => e.entry.data! < hoje).reverse();
+---
+<Base titulo="Eventos" descricao="Agenda de eventos, conferências e encontros da igreja.">
+  <header class="cabecalho-pagina">
+    <div class="container">
+      <span class="sobretitulo">Agenda</span>
+      <h1>Eventos</h1>
+      <p>Conferências, encontros e momentos especiais. Participe!</p>
+    </div>
+  </header>
+
+  <section class="secao">
+    <div class="container">
+      <h2>Próximos eventos</h2>
+      <div class="grade" data-lista-futuros>
+        {
+          futuros.map(({ slug, entry }) => (
+            <CardEvento slug={slug} titulo={entry.titulo} data={entry.data!} horario={entry.horario} local={entry.local} imagem={entry.imagem} resumo={entry.resumo} />
+          ))
+        }
+      </div>
+      <p class="vazio" data-vazio hidden={futuros.length > 0}>Nenhum evento agendado no momento.</p>
+    </div>
+  </section>
+
+  <section class="secao secao--branca passados" data-secao-passados hidden={passados.length === 0}>
+    <div class="container">
+      <h2>Eventos anteriores</h2>
+      <div class="grade" data-lista-passados>
+        {
+          passados.map(({ slug, entry }) => (
+            <CardEvento slug={slug} titulo={entry.titulo} data={entry.data!} horario={entry.horario} local={entry.local} imagem={entry.imagem} resumo={entry.resumo} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <OrganizaEventos />
+</Base>
+
+<style>
+  .passados :global(.cartao) {
+    opacity: 0.85;
+  }
+  .passados :global(.evento__data) {
+    background: var(--tinta-suave);
+  }
+</style>

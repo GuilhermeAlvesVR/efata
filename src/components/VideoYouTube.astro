@@ -1,0 +1,99 @@
+---
+// Mostra só a miniatura; o player do YouTube carrega ao clicar (deixa o site leve).
+import { youtubeId } from '../lib/conteudo';
+
+interface Props {
+  url: string;
+  titulo: string;
+}
+const { url, titulo } = Astro.props;
+const id = youtubeId(url);
+---
+{
+  id ? (
+    <div class="video" data-video-id={id}>
+      <button class="video__capa" type="button" aria-label={`Assistir: ${titulo}`}>
+        <img src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" loading="lazy" />
+        <span class="video__play" aria-hidden="true" />
+      </button>
+    </div>
+  ) : (
+    <a href={url} target="_blank" rel="noopener" class="video video--link">
+      Assistir no YouTube
+    </a>
+  )
+}
+
+<script>
+  document.querySelectorAll<HTMLElement>('.video[data-video-id]').forEach((el) => {
+    el.querySelector('button')?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${el.dataset.videoId}?autoplay=1&rel=0`;
+      iframe.title = el.querySelector('button')?.getAttribute('aria-label') ?? 'Vídeo';
+      iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+      iframe.allowFullscreen = true;
+      el.replaceChildren(iframe);
+    });
+  });
+</script>
+
+<style>
+  .video {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--tinta);
+    overflow: hidden;
+  }
+  .video :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .video__capa {
+    all: unset;
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+  }
+  .video__capa img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.2s;
+  }
+  .video__capa:hover img {
+    opacity: 0.85;
+  }
+  .video__capa:focus-visible {
+    outline: 3px solid var(--vermelho);
+    outline-offset: -3px;
+  }
+  .video__play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 68px;
+    height: 48px;
+    transform: translate(-50%, -50%);
+    border-radius: 12px;
+    background: var(--vermelho);
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.3);
+  }
+  .video__play::after {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 14px;
+    border-style: solid;
+    border-width: 10px 0 10px 16px;
+    border-color: transparent transparent transparent #fff;
+  }
+  .video--link {
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-weight: 700;
+  }
+</style>

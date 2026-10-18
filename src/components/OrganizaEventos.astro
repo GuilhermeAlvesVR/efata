@@ -1,0 +1,27 @@
+---
+// O site é gerado no momento da publicação. Este script reorganiza os eventos no navegador
+// para que um evento que já passou saia de "Próximos" mesmo sem uma nova publicação.
+---
+<script>
+  const hoje = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date());
+
+  document.querySelectorAll<HTMLElement>('[data-lista-futuros]').forEach((lista) => {
+    const passados = document.querySelector<HTMLElement>('[data-lista-passados]');
+    lista.querySelectorAll<HTMLElement>('[data-evento-data]').forEach((card) => {
+      if ((card.dataset.eventoData ?? '') >= hoje) return;
+      if (passados) {
+        passados.prepend(card);
+        passados.closest<HTMLElement>('[data-secao-passados]')?.removeAttribute('hidden');
+      } else {
+        card.remove();
+      }
+    });
+
+    const limite = Number(lista.dataset.limite || 0);
+    if (limite) {
+      [...lista.children].forEach((c, i) => ((c as HTMLElement).hidden = i >= limite));
+    }
+    const vazio = lista.parentElement?.querySelector<HTMLElement>('[data-vazio]');
+    if (vazio) vazio.hidden = lista.children.length > 0;
+  });
+</script>

@@ -1,0 +1,61 @@
+---
+import { NOMES_DIAS } from '../lib/conteudo';
+
+interface Props {
+  horarios: { dia: string; hora: string; nome: string }[];
+}
+const { horarios } = Astro.props;
+---
+{
+  horarios.length > 0 ? (
+    <ul class="cultos">
+      {horarios.map((h) => (
+        <li class="culto">
+          <span class="culto__dia">{NOMES_DIAS[h.dia]}</span>
+          <span class="culto__hora">{h.hora}</span>
+          {h.nome && <span class="culto__nome">{h.nome}</span>}
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p class="vazio">Horários em breve.</p>
+  )
+}
+
+<style>
+  .cultos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  }
+  .culto {
+    display: flex;
+    flex-direction: column;
+    padding: 22px 24px;
+    background: var(--branco);
+    border: 1px solid var(--linha);
+    border-left: 4px solid var(--vermelho);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
+  }
+  .culto__dia {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--tinta-suave);
+  }
+  .culto__hora {
+    font-family: var(--fonte-titulo);
+    font-size: 2.4rem;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--vermelho);
+  }
+  .culto__nome {
+    color: var(--tinta-suave);
+  }
+</style>

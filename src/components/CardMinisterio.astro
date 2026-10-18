@@ -1,0 +1,76 @@
+---
+interface Props {
+  slug: string;
+  nome: string;
+  resumo?: string;
+  encontros?: string;
+  imagem?: string | null;
+}
+const { slug, nome, resumo, encontros, imagem } = Astro.props;
+---
+<article class="cartao ministerio">
+  <a href={`/ministerios/${slug}`} class="ministerio__link">
+    {
+      imagem ? (
+        <img src={imagem} alt="" loading="lazy" class="ministerio__imagem" />
+      ) : (
+        <div class="ministerio__inicial" aria-hidden="true">
+          {nome.charAt(0)}
+        </div>
+      )
+    }
+    <div class="ministerio__corpo">
+      <h3>{nome}</h3>
+      {encontros && <p class="ministerio__encontros">{encontros}</p>}
+      {resumo && <p class="ministerio__resumo">{resumo}</p>}
+      <span class="link-seta">Saiba mais</span>
+    </div>
+  </a>
+</article>
+
+<style>
+  .ministerio__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+  }
+  .ministerio__link:hover h3 {
+    color: var(--vermelho);
+  }
+  .ministerio__imagem {
+    aspect-ratio: 3 / 2;
+    width: 100%;
+    object-fit: cover;
+  }
+  .ministerio__inicial {
+    aspect-ratio: 3 / 2;
+    display: grid;
+    place-items: center;
+    font-family: var(--fonte-titulo);
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--vermelho);
+    background: linear-gradient(135deg, var(--vermelho-claro), #fff 70%);
+  }
+  .ministerio__corpo {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 20px;
+  }
+  .ministerio__encontros {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--vermelho);
+    margin-bottom: 8px;
+  }
+  .ministerio__resumo {
+    color: var(--tinta-suave);
+    flex: 1;
+  }
+  .link-seta {
+    color: var(--vermelho);
+  }
+</style>

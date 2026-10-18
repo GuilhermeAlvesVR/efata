@@ -1,0 +1,65 @@
+---
+import Base from '../layouts/Base.astro';
+import VideoYouTube from '../components/VideoYouTube.astro';
+import { configuracoes, mensagens, formatarData } from '../lib/conteudo';
+
+const config = await configuracoes();
+const lista = await mensagens();
+---
+<Base titulo="Mensagens" descricao="Assista às pregações e mensagens da igreja.">
+  <header class="cabecalho-pagina">
+    <div class="container">
+      <span class="sobretitulo">Palavra</span>
+      <h1>Mensagens</h1>
+      <p>Assista às pregações e seja edificado onde estiver.</p>
+      {config.youtube && <a class="botao canal" href={config.youtube} target="_blank" rel="noopener">Inscreva-se no canal</a>}
+    </div>
+  </header>
+  <section class="secao">
+    <div class="container">
+      {
+        lista.length > 0 ? (
+          <div class="grade">
+            {lista.map(({ entry }) => (
+              <article class="cartao mensagem">
+                <VideoYouTube url={entry.youtube} titulo={entry.titulo} />
+                <div class="mensagem__corpo">
+                  <h2>{entry.titulo}</h2>
+                  <p class="mensagem__info">
+                    {[entry.pregador, entry.data && formatarData(entry.data)].filter(Boolean).join(' · ')}
+                  </p>
+                  {entry.resumo && <p class="mensagem__resumo">{entry.resumo}</p>}
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p class="vazio">Em breve. Enquanto isso, visite nosso canal no YouTube.</p>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .canal {
+    margin-top: 24px;
+  }
+  .mensagem__corpo {
+    padding: 18px 20px 20px;
+  }
+  .mensagem__corpo h2 {
+    font-size: 1.25rem;
+    margin-bottom: 6px;
+  }
+  .mensagem__info {
+    color: var(--tinta-suave);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  .mensagem__resumo {
+    margin: 10px 0 0;
+    color: var(--tinta-suave);
+  }
+</style>
