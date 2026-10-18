@@ -7,7 +7,7 @@ import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   // Troque pelo domínio definitivo quando houver um.
-  site: process.env.SITE_URL ?? 'https://efata.vercel.app',
+  site: process.env.SITE_URL ?? 'https://efata-seven.vercel.app',
   integrations: [
     react(),
     keystatic(),

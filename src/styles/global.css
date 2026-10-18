@@ -10,8 +10,8 @@
   --papel: #fbf9f6;
   --branco: #ffffff;
 
-  --fonte-titulo: 'Fraunces', Georgia, 'Times New Roman', serif;
-  --fonte-texto: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fonte-titulo: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fonte-texto: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   --largura: 1120px;
   --raio: 14px;
@@ -54,8 +54,9 @@ h1,
 h2,
 h3 {
   font-family: var(--fonte-titulo);
-  font-weight: 600;
-  line-height: 1.15;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
   margin: 0 0 0.5em;
   text-wrap: balance;
 }
@@ -204,9 +205,8 @@ a:hover {
   margin: 1.5em 0;
   padding: 0.2em 0 0.2em 1.2em;
   border-left: 3px solid var(--vermelho);
-  font-family: var(--fonte-titulo);
-  font-size: 1.2rem;
-  font-style: italic;
+  font-size: 1.15rem;
+  font-weight: 500;
 }
 .texto-rico ul,
 .texto-rico ol {
