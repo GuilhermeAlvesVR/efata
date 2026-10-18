@@ -42,13 +42,13 @@ Campos deixados vazios simplesmente não aparecem no site (ex.: sem WhatsApp, o 
    git add -A
    git commit -m "Site da igreja"
    git branch -M main
-   git remote add origin https://github.com/SEU-USUARIO/efata.git
+   git remote add origin https://github.com/GuilhermeAlvesVR/efata.git
    git push -u origin main
    ```
 2. **Vercel** — em [vercel.com](https://vercel.com), entre com a conta do GitHub → *Add New → Project* → escolha o repositório → *Deploy*.
    O site fica no ar em um endereço `*.vercel.app`.
 3. **Painel online (Keystatic + GitHub)** — para editar pelo site publicado:
-   1. Na Vercel, em *Settings → Environment Variables*, crie `PUBLIC_KEYSTATIC_REPO` com o valor `SEU-USUARIO/efata`.
+   1. Na Vercel, em *Settings → Environment Variables*, crie `PUBLIC_KEYSTATIC_REPO` com o valor `GuilhermeAlvesVR/efata`.
    2. Rode o projeto no computador com essa mesma variável em um arquivo `.env` (veja `.env.example`) e abra `/keystatic`.
       O Keystatic vai oferecer **criar um GitHub App**. Siga as instruções; ao final ele preenche no `.env` as variáveis
       `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`, `KEYSTATIC_SECRET` e `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`.
