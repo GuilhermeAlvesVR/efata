@@ -91,8 +91,8 @@ function minutos(horario = '') {
   return m ? Number(m[1]) * 60 + Number(m[2] ?? 0) : 24 * 60;
 }
 
-export async function mensagens() {
-  const todas = await ler('mensagens');
+export async function pregacoes() {
+  const todas = await ler('pregacoes');
   return todas.sort((a, b) => b.entry.data.localeCompare(a.entry.data));
 }
 

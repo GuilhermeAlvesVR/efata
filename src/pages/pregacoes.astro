@@ -1,16 +1,16 @@
 ---
 import Base from '../layouts/Base.astro';
 import VideoYouTube from '../components/VideoYouTube.astro';
-import { configuracoes, mensagens, formatarData } from '../lib/conteudo';
+import { configuracoes, pregacoes, formatarData } from '../lib/conteudo';
 
 const config = await configuracoes();
-const lista = await mensagens();
+const lista = await pregacoes();
 ---
-<Base titulo="Mensagens" descricao="Assista às pregações e mensagens da igreja.">
+<Base titulo="Pregações" descricao="Assista às pregações da igreja.">
   <header class="cabecalho-pagina">
     <div class="container">
       <span class="sobretitulo">Palavra</span>
-      <h1>Mensagens</h1>
+      <h1>Pregações</h1>
       <p>Assista às pregações e seja edificado onde estiver.</p>
       {config.youtube && <a class="botao canal" href={config.youtube} target="_blank" rel="noopener">Inscreva-se no canal</a>}
     </div>
@@ -21,14 +21,14 @@ const lista = await mensagens();
         lista.length > 0 ? (
           <div class="grade">
             {lista.map(({ entry }) => (
-              <article class="cartao mensagem">
+              <article class="cartao pregacao">
                 <VideoYouTube url={entry.youtube} titulo={entry.titulo} />
-                <div class="mensagem__corpo">
+                <div class="pregacao__corpo">
                   <h2>{entry.titulo}</h2>
-                  <p class="mensagem__info">
+                  <p class="pregacao__info">
                     {[entry.pregador, entry.data && formatarData(entry.data)].filter(Boolean).join(' · ')}
                   </p>
-                  {entry.resumo && <p class="mensagem__resumo">{entry.resumo}</p>}
+                  {entry.resumo && <p class="pregacao__resumo">{entry.resumo}</p>}
                 </div>
               </article>
             ))}
@@ -45,20 +45,20 @@ const lista = await mensagens();
   .canal {
     margin-top: 24px;
   }
-  .mensagem__corpo {
+  .pregacao__corpo {
     padding: 18px 20px 20px;
   }
-  .mensagem__corpo h2 {
+  .pregacao__corpo h2 {
     font-size: 1.25rem;
     margin-bottom: 6px;
   }
-  .mensagem__info {
+  .pregacao__info {
     color: var(--tinta-suave);
     font-size: 0.95rem;
     font-weight: 600;
     margin: 0;
   }
-  .mensagem__resumo {
+  .pregacao__resumo {
     margin: 10px 0 0;
     color: var(--tinta-suave);
   }

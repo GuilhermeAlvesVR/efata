@@ -1,7 +1,7 @@
 # Site do Ministério Efatá — Sarando a Terra Ferida
 
 Site da igreja feito com [Astro](https://astro.build), publicado em https://www.efatavr.com.br.
-O conteúdo (cultos, eventos, ministérios, mensagens, Pix…) é editado pelo painel [Pages CMS](https://pagescms.org),
+O conteúdo (cultos, eventos, ministérios, pregações, Pix…) é editado pelo painel [Pages CMS](https://pagescms.org),
 sem mexer em código. Quem edita **não precisa ter conta no GitHub**: basta ser convidado por e-mail.
 
 ## Painel de edição (Pages CMS)
@@ -27,14 +27,14 @@ Cada **Save** no painel grava a alteração no GitHub, e a Vercel republica o si
 | Seção | O que é |
 | --- | --- |
 | 🔴 Aviso ao vivo | Liga/desliga a faixa "Culto ao vivo agora" no topo do site, com link para o YouTube |
-| Configurações gerais | Nome, slogan, endereço, WhatsApp, e-mail, Instagram, YouTube, Facebook. O WhatsApp também recebe os pedidos de oração |
+| Configurações gerais | Nome, slogan, endereço, WhatsApp, e-mail, Instagram, YouTube, Facebook |
 | Quem somos | Missão, visão, versículo de destaque e a história do ministério |
 | Cultos | Dias e horários |
 | Contribua | Chave Pix (o QR Code é gerado sozinho) e dados bancários |
 | Liderança | Pastores e líderes, com foto |
 | Eventos | Agenda com cartaz. No dia aparece "É hoje!", e depois o evento vai para "Eventos anteriores" sozinho |
 | Ministérios | Louvor, jovens, kids etc. |
-| Mensagens | Pregações: basta colar o link do vídeo do YouTube |
+| Pregações | Vídeos das pregações: basta colar o link do vídeo do YouTube |
 | Galeria de fotos | Álbuns com várias fotos. A primeira vira a capa; versões leves de cada foto são geradas na publicação |
 
 Campos deixados vazios simplesmente não aparecem no site (ex.: sem WhatsApp, o botão verde some).

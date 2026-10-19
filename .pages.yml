@@ -201,10 +201,10 @@ content:
               path: public/images/galeria
               multiple: { max: 200 }
 
-      - name: mensagens
-        label: Mensagens (pregações)
+      - name: pregacoes
+        label: Pregações
         type: collection
-        path: src/content/mensagens
+        path: src/content/pregacoes
         format: yaml
         filename: "{titulo}.yaml"
         view: { primary: titulo, fields: [titulo, pregador, data], sort: [data, titulo], default: { sort: data, order: desc } }

@@ -7,14 +7,14 @@ import CardMinisterio from '../components/CardMinisterio.astro';
 import VideoYouTube from '../components/VideoYouTube.astro';
 import OrganizaEventos from '../components/OrganizaEventos.astro';
 import logo from '../assets/logo.jpeg';
-import { configuracoes, cultos, eventos, mensagens, ministerios, sobre as lerSobre, formatarData, hojeISO, DIAS_CURTOS } from '../lib/conteudo';
+import { configuracoes, cultos, eventos, pregacoes, ministerios, sobre as lerSobre, formatarData, hojeISO, DIAS_CURTOS } from '../lib/conteudo';
 
 const config = await configuracoes();
 const { horarios } = await cultos();
 const sobre = (await lerSobre())?.entry;
 const hoje = hojeISO();
 const proximos = (await eventos()).filter((e) => e.entry.data >= hoje).slice(0, 6);
-const ultimaMensagem = (await mensagens())[0];
+const ultimaPregacao = (await pregacoes())[0];
 const listaMinisterios = (await ministerios()).slice(0, 3);
 ---
 <Base>
@@ -106,22 +106,22 @@ const listaMinisterios = (await ministerios()).slice(0, 3);
   </section>
 
   {
-    ultimaMensagem && (
+    ultimaPregacao && (
       <section class="secao">
-        <div class="container destaque-mensagem">
+        <div class="container destaque-pregacao">
           <div>
-            <span class="sobretitulo">Última mensagem</span>
-            <h2>{ultimaMensagem.entry.titulo}</h2>
-            <p class="destaque-mensagem__info">
-              {ultimaMensagem.entry.pregador}
-              {ultimaMensagem.entry.pregador && ultimaMensagem.entry.data && ' · '}
-              {ultimaMensagem.entry.data && formatarData(ultimaMensagem.entry.data)}
+            <span class="sobretitulo">Última pregação</span>
+            <h2>{ultimaPregacao.entry.titulo}</h2>
+            <p class="destaque-pregacao__info">
+              {ultimaPregacao.entry.pregador}
+              {ultimaPregacao.entry.pregador && ultimaPregacao.entry.data && ' · '}
+              {ultimaPregacao.entry.data && formatarData(ultimaPregacao.entry.data)}
             </p>
-            {ultimaMensagem.entry.resumo && <p>{ultimaMensagem.entry.resumo}</p>}
-            <a class="link-seta" href="/mensagens">Todas as mensagens</a>
+            {ultimaPregacao.entry.resumo && <p>{ultimaPregacao.entry.resumo}</p>}
+            <a class="link-seta" href="/pregacoes">Todas as pregações</a>
           </div>
-          <div class="destaque-mensagem__video">
-            <VideoYouTube url={ultimaMensagem.entry.youtube} titulo={ultimaMensagem.entry.titulo} />
+          <div class="destaque-pregacao__video">
+            <VideoYouTube url={ultimaPregacao.entry.youtube} titulo={ultimaPregacao.entry.titulo} />
           </div>
         </div>
       </section>
@@ -251,22 +251,22 @@ const listaMinisterios = (await ministerios()).slice(0, 3);
     opacity: 0.85;
   }
 
-  .destaque-mensagem {
+  .destaque-pregacao {
     display: grid;
     gap: 28px;
     align-items: center;
   }
   @media (min-width: 860px) {
-    .destaque-mensagem {
+    .destaque-pregacao {
       grid-template-columns: 0.8fr 1.2fr;
       gap: 48px;
     }
   }
-  .destaque-mensagem__info {
+  .destaque-pregacao__info {
     color: var(--tinta-suave);
     font-weight: 600;
   }
-  .destaque-mensagem__video {
+  .destaque-pregacao__video {
     border-radius: var(--raio);
     overflow: hidden;
     box-shadow: var(--sombra);

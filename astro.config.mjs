@@ -6,4 +6,8 @@ import miniaturas from './src/integrations/miniaturas.mjs';
 export default defineConfig({
   site: process.env.SITE_URL ?? 'https://www.efatavr.com.br',
   integrations: [sitemap(), miniaturas()],
+  // Endereços antigos que mudaram de nome
+  redirects: {
+    '/mensagens': '/pregacoes',
+  },
 });

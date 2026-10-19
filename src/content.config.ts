@@ -111,8 +111,8 @@ const ministerios = defineCollection({
   }),
 });
 
-const mensagens = defineCollection({
-  loader: pasta('mensagens', 'yaml'),
+const pregacoes = defineCollection({
+  loader: pasta('pregacoes', 'yaml'),
   schema: z.object({
     titulo: z.string(),
     pregador: texto,
@@ -145,6 +145,6 @@ export const collections = {
   lideranca,
   eventos,
   ministerios,
-  mensagens,
+  pregacoes,
   galeria,
 };
