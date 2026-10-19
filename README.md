@@ -6,7 +6,10 @@ sem mexer em código. Quem edita **não precisa ter conta no GitHub**: basta ser
 
 ## Painel de edição (Pages CMS)
 
-Endereço: **https://app.pagescms.org**
+Endereço: **https://app.pagescms.org** (atalho fácil: **www.efatavr.com.br/painel**, configurado em `vercel.json`)
+
+Quem foi convidado entra com o próprio e-mail: o Pages CMS envia um link de acesso na hora, sem senha.
+No mesmo celular e navegador, o login fica salvo por alguns dias e renova a cada uso.
 
 ### Configuração inicial (uma vez só, feita pelo dono do repositório)
 1. Entre em https://app.pagescms.org com a conta do GitHub **GuilhermeAlvesVR**.
