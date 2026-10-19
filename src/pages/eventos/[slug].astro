@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Icone from '../../components/Icone.astro';
+import OrganizaEventos from '../../components/OrganizaEventos.astro';
 import { configuracoes, eventos, formatarData, renderMarkdoc, linkWhatsApp } from '../../lib/conteudo';
 
 export async function getStaticPaths() {
@@ -17,6 +18,7 @@ const dataLonga = formatarData(evento.data!, { weekday: 'long', day: 'numeric', 
     <header class="cabecalho-pagina">
       <div class="container">
         <a href="/eventos" class="voltar">← Todos os eventos</a>
+        <p class="hoje" data-hoje-para={evento.data} hidden>É hoje{evento.horario && `, às ${evento.horario}`}! Esperamos você.</p>
         <h1>{evento.titulo}</h1>
         <ul class="detalhes">
           <li><Icone nome="calendario" /> <span class="capitalizar">{dataLonga}</span></li>
@@ -42,6 +44,7 @@ const dataLonga = formatarData(evento.data!, { weekday: 'long', day: 'numeric', 
       </div>
     </div>
   </article>
+  <OrganizaEventos />
 </Base>
 
 <style>
@@ -50,6 +53,19 @@ const dataLonga = formatarData(evento.data!, { weekday: 'long', day: 'numeric', 
     margin-bottom: 16px;
     font-weight: 600;
     text-decoration: none;
+  }
+  .hoje {
+    display: block;
+    width: fit-content;
+    margin: 0 0 12px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--vermelho);
+    color: #fff;
+    font-weight: 700;
+  }
+  .hoje[hidden] {
+    display: none;
   }
   .detalhes {
     list-style: none;

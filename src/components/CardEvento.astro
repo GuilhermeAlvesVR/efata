@@ -19,6 +19,7 @@ const mes = formatarData(data, { month: 'short' }).replace('.', '');
   <a href={`/eventos/${slug}`} class="evento__link">
     <div class="evento__midia">
       {imagem ? <img src={imagem} alt="" loading="lazy" /> : <div class="evento__sem-imagem" aria-hidden="true" />}
+      <span class="evento__selo" data-selo-hoje hidden>É hoje!</span>
       <time class="evento__data" datetime={data}>
         <span class="evento__dia">{dia}</span>
         <span class="evento__mes">{mes}</span>
@@ -99,6 +100,38 @@ const mes = formatarData(data, { month: 'short' }).replace('.', '');
   }
   .evento__corpo {
     padding: 34px 20px 20px;
+  }
+  .evento__selo {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--vermelho);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    box-shadow: 0 4px 14px rgb(163 22 28 / 0.4);
+    animation: pulsar 2s ease-in-out infinite;
+  }
+  .evento__selo[hidden] {
+    display: none;
+  }
+  .evento--hoje {
+    border-color: var(--vermelho);
+    box-shadow: 0 0 0 2px var(--vermelho), var(--sombra);
+  }
+  @keyframes pulsar {
+    50% {
+      transform: scale(1.06);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .evento__selo {
+      animation: none;
+    }
   }
   .evento__corpo h3 {
     transition: color 0.15s;

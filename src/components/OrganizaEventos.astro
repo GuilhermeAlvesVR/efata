@@ -1,9 +1,20 @@
 ---
-// O site é gerado no momento da publicação. Este script reorganiza os eventos no navegador
-// para que um evento que já passou saia de "Próximos" mesmo sem uma nova publicação.
+// O site é gerado no momento da publicação. Este script ajusta os eventos no navegador,
+// sem precisar republicar: marca os de hoje com "É hoje!" e tira de "Próximos" os que já passaram.
 ---
 <script>
-  const hoje = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date());
+  let hoje = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date());
+  // Para testar no computador: http://127.0.0.1:4321/eventos?data=2026-10-24
+  if (import.meta.env.DEV) hoje = new URLSearchParams(location.search).get('data') ?? hoje;
+
+  document.querySelectorAll<HTMLElement>('[data-evento-data]').forEach((el) => {
+    if (el.dataset.eventoData !== hoje) return;
+    el.classList.add('evento--hoje');
+    el.querySelectorAll<HTMLElement>('[data-selo-hoje]').forEach((s) => (s.hidden = false));
+  });
+  document.querySelectorAll<HTMLElement>('[data-hoje-para]').forEach((el) => {
+    el.hidden = el.dataset.hojePara !== hoje;
+  });
 
   document.querySelectorAll<HTMLElement>('[data-lista-futuros]').forEach((lista) => {
     const passados = document.querySelector<HTMLElement>('[data-lista-passados]');
