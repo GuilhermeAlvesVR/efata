@@ -7,13 +7,13 @@ import CardMinisterio from '../components/CardMinisterio.astro';
 import VideoYouTube from '../components/VideoYouTube.astro';
 import OrganizaEventos from '../components/OrganizaEventos.astro';
 import logo from '../assets/logo.jpeg';
-import { configuracoes, cultos, eventos, mensagens, ministerios, reader, formatarData, hojeISO, DIAS_CURTOS } from '../lib/conteudo';
+import { configuracoes, cultos, eventos, mensagens, ministerios, sobre as lerSobre, formatarData, hojeISO, DIAS_CURTOS } from '../lib/conteudo';
 
 const config = await configuracoes();
 const { horarios } = await cultos();
-const sobre = await reader.singletons.sobre.read();
+const sobre = (await lerSobre())?.entry;
 const hoje = hojeISO();
-const proximos = (await eventos()).filter((e) => e.entry.data! >= hoje).slice(0, 6);
+const proximos = (await eventos()).filter((e) => e.entry.data >= hoje).slice(0, 6);
 const ultimaMensagem = (await mensagens())[0];
 const listaMinisterios = (await ministerios()).slice(0, 3);
 ---
@@ -91,7 +91,7 @@ const listaMinisterios = (await ministerios()).slice(0, 3);
               <CardEvento
                 slug={slug}
                 titulo={entry.titulo}
-                data={entry.data!}
+                data={entry.data}
                 horario={entry.horario}
                 local={entry.local}
                 imagem={entry.imagem}

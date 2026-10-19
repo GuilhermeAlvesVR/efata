@@ -1,11 +1,17 @@
-import { createReader } from '@keystatic/core/reader';
-import Markdoc, { type Node } from '@markdoc/markdoc';
-import keystaticConfig from '../../keystatic.config';
+import { getCollection, type CollectionKey } from 'astro:content';
 
-export const reader = createReader(process.cwd(), keystaticConfig);
+/** Lê uma coleção no formato { slug, entry (os campos), doc (para renderizar o texto) }. */
+async function ler<C extends CollectionKey>(colecao: C) {
+  return (await getCollection(colecao)).map((doc) => ({ slug: doc.id, entry: doc.data, doc }));
+}
+
+/** Coleções de um arquivo só (configurações, cultos…): devolve o único item, se existir. */
+async function unico<C extends CollectionKey>(colecao: C) {
+  return (await ler(colecao))[0];
+}
 
 export async function configuracoes() {
-  const c = await reader.singletons.configuracoes.read();
+  const c = (await unico('configuracoes'))?.entry;
   return {
     nome: c?.nome || 'Ministério Efatá',
     slogan: c?.slogan || '',
@@ -19,8 +25,12 @@ export async function configuracoes() {
   };
 }
 
-export function renderMarkdoc(node: Node) {
-  return Markdoc.renderers.html(Markdoc.transform(node));
+export async function sobre() {
+  return unico('sobre');
+}
+
+export async function contribua() {
+  return (await unico('contribua'))?.entry;
 }
 
 /** Data de hoje (fuso de Brasília) no formato YYYY-MM-DD, igual ao salvo pelo painel. */
@@ -53,7 +63,7 @@ export const DIAS_CURTOS: Record<string, string> = {
 const ORDEM_DIAS = Object.keys(NOMES_DIAS);
 
 export async function cultos() {
-  const c = await reader.singletons.cultos.read();
+  const c = (await unico('cultos'))?.entry;
   const horarios = [...(c?.horarios ?? [])].sort(
     (a, b) => ORDEM_DIAS.indexOf(a.dia) - ORDEM_DIAS.indexOf(b.dia) || a.hora.localeCompare(b.hora)
   );
@@ -61,10 +71,8 @@ export async function cultos() {
 }
 
 export async function eventos() {
-  const todos = await reader.collections.eventos.all();
-  return todos
-    .filter((e) => e.entry.data)
-    .sort((a, b) => a.entry.data!.localeCompare(b.entry.data!) || minutos(a.entry.horario) - minutos(b.entry.horario));
+  const todos = await ler('eventos');
+  return todos.sort((a, b) => a.entry.data.localeCompare(b.entry.data) || minutos(a.entry.horario) - minutos(b.entry.horario));
 }
 
 /** "9h" → 540, "19h30" → 1170; sem horário vai para o fim do dia. */
@@ -74,18 +82,18 @@ function minutos(horario = '') {
 }
 
 export async function mensagens() {
-  const todas = await reader.collections.mensagens.all();
-  return todas.sort((a, b) => (b.entry.data ?? '').localeCompare(a.entry.data ?? ''));
+  const todas = await ler('mensagens');
+  return todas.sort((a, b) => b.entry.data.localeCompare(a.entry.data));
 }
 
 export async function ministerios() {
-  const todos = await reader.collections.ministerios.all();
-  return todos.sort((a, b) => (a.entry.ordem ?? 0) - (b.entry.ordem ?? 0) || a.entry.nome.localeCompare(b.entry.nome));
+  const todos = await ler('ministerios');
+  return todos.sort((a, b) => a.entry.ordem - b.entry.ordem || a.entry.nome.localeCompare(b.entry.nome));
 }
 
 export async function lideranca() {
-  const todos = await reader.collections.lideranca.all();
-  return todos.sort((a, b) => (a.entry.ordem ?? 0) - (b.entry.ordem ?? 0));
+  const todos = await ler('lideranca');
+  return todos.sort((a, b) => a.entry.ordem - b.entry.ordem);
 }
 
 export function youtubeId(url: string) {

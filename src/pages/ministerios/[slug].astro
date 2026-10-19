@@ -1,14 +1,15 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { configuracoes, ministerios, renderMarkdoc, linkWhatsApp } from '../../lib/conteudo';
+import { render } from 'astro:content';
+import { configuracoes, ministerios, linkWhatsApp } from '../../lib/conteudo';
 
 export async function getStaticPaths() {
-  return (await ministerios()).map((m) => ({ params: { slug: m.slug }, props: { ministerio: m.entry } }));
+  return (await ministerios()).map((m) => ({ params: { slug: m.slug }, props: { ministerio: m.entry, doc: m.doc } }));
 }
 
-const { ministerio } = Astro.props;
+const { ministerio, doc } = Astro.props;
 const config = await configuracoes();
-const descricao = renderMarkdoc((await ministerio.descricao()).node);
+const { Content: Descricao } = await render(doc);
 const temFicha = Boolean(ministerio.imagem || ministerio.lider || ministerio.encontros);
 ---
 <Base titulo={ministerio.nome} descricao={ministerio.resumo} imagem={ministerio.imagem ?? undefined}>
@@ -23,7 +24,7 @@ const temFicha = Boolean(ministerio.imagem || ministerio.lider || ministerio.enc
     <div class="secao">
       <div class="container corpo">
         <div>
-          <div class="texto-rico" set:html={descricao} />
+          <div class="texto-rico"><Descricao /></div>
           {
             config.whatsapp && (
               <a class="botao" href={linkWhatsApp(config.whatsapp, `Olá! Quero participar do ministério ${ministerio.nome}.`)} target="_blank" rel="noopener">

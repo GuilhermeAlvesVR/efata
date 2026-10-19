@@ -10,21 +10,12 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/react": "^7.1.0",
     "@astrojs/sitemap": "^3.7.4",
-    "@astrojs/vercel": "^11.0.15",
-    "@keystatic/astro": "^6.0.0",
-    "@keystatic/core": "^0.6.9",
-    "@markdoc/markdoc": "^0.5.10",
     "astro": "^7.4.0",
-    "qrcode": "^1.5.4",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "@types/qrcode": "^1.5.6",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
     "typescript": "^7.0.2"
   }
 }

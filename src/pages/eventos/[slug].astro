@@ -2,16 +2,17 @@
 import Base from '../../layouts/Base.astro';
 import Icone from '../../components/Icone.astro';
 import OrganizaEventos from '../../components/OrganizaEventos.astro';
-import { configuracoes, eventos, formatarData, renderMarkdoc, linkWhatsApp } from '../../lib/conteudo';
+import { render } from 'astro:content';
+import { configuracoes, eventos, formatarData, linkWhatsApp } from '../../lib/conteudo';
 
 export async function getStaticPaths() {
-  return (await eventos()).map((e) => ({ params: { slug: e.slug }, props: { evento: e.entry } }));
+  return (await eventos()).map((e) => ({ params: { slug: e.slug }, props: { evento: e.entry, doc: e.doc } }));
 }
 
-const { evento } = Astro.props;
+const { evento, doc } = Astro.props;
 const config = await configuracoes();
-const descricao = renderMarkdoc((await evento.descricao()).node);
-const dataLonga = formatarData(evento.data!, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+const { Content: Descricao } = await render(doc);
+const dataLonga = formatarData(evento.data, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 ---
 <Base titulo={evento.titulo} descricao={evento.resumo || `${evento.titulo} — ${dataLonga}`} imagem={evento.imagem ?? undefined}>
   <article>
@@ -32,7 +33,7 @@ const dataLonga = formatarData(evento.data!, { weekday: 'long', day: 'numeric', 
         {evento.imagem && <img src={evento.imagem} alt={`Cartaz: ${evento.titulo}`} class="cartaz" />}
         <div>
           {evento.resumo && <p class="resumo">{evento.resumo}</p>}
-          <div class="texto-rico" set:html={descricao} />
+          <div class="texto-rico"><Descricao /></div>
           {
             config.whatsapp && (
               <a class="botao" href={linkWhatsApp(config.whatsapp, `Olá! Quero saber mais sobre o evento "${evento.titulo}".`)} target="_blank" rel="noopener">

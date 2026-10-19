@@ -1,9 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
-import { reader, lideranca, renderMarkdoc } from '../lib/conteudo';
+import { render } from 'astro:content';
+import { sobre as lerSobre, lideranca } from '../lib/conteudo';
 
-const sobre = await reader.singletons.sobre.read();
-const historia = sobre ? renderMarkdoc((await sobre.texto()).node) : '';
+const doc = await lerSobre();
+const sobre = doc?.entry;
+const Historia = doc && doc.doc.body?.trim() ? (await render(doc.doc)).Content : null;
 const lideres = await lideranca();
 ---
 <Base titulo={sobre?.titulo || 'Quem somos'} descricao={sobre?.missao}>
@@ -36,10 +38,12 @@ const lideres = await lideranca();
   }
 
   {
-    historia && (
+    Historia && (
       <section class="secao">
         <div class="container">
-          <div class="texto-rico" set:html={historia} />
+          <div class="texto-rico">
+            <Historia />
+          </div>
         </div>
       </section>
     )

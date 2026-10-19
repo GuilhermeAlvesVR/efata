@@ -6,8 +6,8 @@ import { eventos, hojeISO } from '../../lib/conteudo';
 
 const hoje = hojeISO();
 const todos = await eventos();
-const futuros = todos.filter((e) => e.entry.data! >= hoje);
-const passados = todos.filter((e) => e.entry.data! < hoje).reverse();
+const futuros = todos.filter((e) => e.entry.data >= hoje);
+const passados = todos.filter((e) => e.entry.data < hoje).reverse();
 ---
 <Base titulo="Eventos" descricao="Agenda de eventos, conferências e encontros da igreja.">
   <header class="cabecalho-pagina">
@@ -24,7 +24,7 @@ const passados = todos.filter((e) => e.entry.data! < hoje).reverse();
       <div class="grade" data-lista-futuros>
         {
           futuros.map(({ slug, entry }) => (
-            <CardEvento slug={slug} titulo={entry.titulo} data={entry.data!} horario={entry.horario} local={entry.local} imagem={entry.imagem} resumo={entry.resumo} />
+            <CardEvento slug={slug} titulo={entry.titulo} data={entry.data} horario={entry.horario} local={entry.local} imagem={entry.imagem} resumo={entry.resumo} />
           ))
         }
       </div>
@@ -38,7 +38,7 @@ const passados = todos.filter((e) => e.entry.data! < hoje).reverse();
       <div class="grade" data-lista-passados>
         {
           passados.map(({ slug, entry }) => (
-            <CardEvento slug={slug} titulo={entry.titulo} data={entry.data!} horario={entry.horario} local={entry.local} imagem={entry.imagem} resumo={entry.resumo} />
+            <CardEvento slug={slug} titulo={entry.titulo} data={entry.data} horario={entry.horario} local={entry.local} imagem={entry.imagem} resumo={entry.resumo} />
           ))
         }
       </div>

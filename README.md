@@ -1,21 +1,26 @@
 # Site do Ministério Efatá — Sarando a Terra Ferida
 
-Site da igreja feito com [Astro](https://astro.build) e painel administrativo [Keystatic](https://keystatic.com).
-O conteúdo (cultos, eventos, ministérios, mensagens, Pix…) é editado pelo painel em `/keystatic`, sem mexer em código.
+Site da igreja feito com [Astro](https://astro.build), publicado em https://www.efatavr.com.br.
+O conteúdo (cultos, eventos, ministérios, mensagens, Pix…) é editado pelo painel [Pages CMS](https://pagescms.org),
+sem mexer em código. Quem edita **não precisa ter conta no GitHub**: basta ser convidado por e-mail.
 
-## Rodar no computador
+## Painel de edição (Pages CMS)
 
-Precisa do [Node.js](https://nodejs.org) 22 ou mais novo.
+Endereço: **https://app.pagescms.org**
 
-```bash
-npm install
-npm run dev
-```
+### Configuração inicial (uma vez só, feita pelo dono do repositório)
+1. Entre em https://app.pagescms.org com a conta do GitHub **GuilhermeAlvesVR**.
+2. Instale o GitHub App do Pages CMS e dê acesso ao repositório **efata**.
+3. Abra o repositório **efata**. O painel lê a configuração do arquivo `.pages.yml` e mostra as seções "Igreja" e "Conteúdo".
 
-- Site: http://127.0.0.1:4321
-- Painel: http://127.0.0.1:4321/keystatic
+### Convidar quem vai editar
+No Pages CMS, abra o repositório **efata** e vá em **Collaborators** (Colaboradores). Digite o e-mail da pessoa e envie o convite.
+Ela recebe o convite, entra pelo e-mail e já pode editar o conteúdo e as imagens. Não precisa ter conta no GitHub.
 
-No computador, o painel salva direto nos arquivos de `src/content/`.
+Os convidados não mudam a configuração do painel nem convidam outras pessoas; isso fica com o dono do repositório.
+
+### Como as alterações chegam ao site
+Cada **Save** no painel grava a alteração no GitHub, e a Vercel republica o site sozinha em cerca de 1 minuto.
 
 ## O que dá para editar no painel
 
@@ -26,53 +31,44 @@ No computador, o painel salva direto nos arquivos de `src/content/`.
 | Cultos | Dias e horários |
 | Contribua | Chave Pix (o QR Code é gerado sozinho) e dados bancários |
 | Liderança | Pastores e líderes, com foto |
-| Eventos | Agenda. Eventos com data passada saem sozinhos de "Próximos eventos" |
+| Eventos | Agenda com cartaz. No dia aparece "É hoje!", e depois o evento vai para "Eventos anteriores" sozinho |
 | Ministérios | Louvor, jovens, kids etc. |
 | Mensagens | Pregações: basta colar o link do vídeo do YouTube |
 
 Campos deixados vazios simplesmente não aparecem no site (ex.: sem WhatsApp, o botão verde some).
 
-> **Antes de publicar:** os textos marcados com `[EXEMPLO]` e os eventos "(Exemplo)" são provisórios.
-> Troque ou apague pelo painel.
+> Os textos marcados com `[EXEMPLO]` são provisórios. Troque pelo painel.
 
-## Publicar de graça na Vercel
+## Rodar no computador
 
-1. **GitHub** — crie um repositório (pode ser privado) e envie este projeto:
-   ```bash
-   git add -A
-   git commit -m "Site da igreja"
-   git branch -M main
-   git remote add origin https://github.com/GuilhermeAlvesVR/efata.git
-   git push -u origin main
-   ```
-2. **Vercel** — em [vercel.com](https://vercel.com), entre com a conta do GitHub → *Add New → Project* → escolha o repositório → *Deploy*.
-   O site fica no ar em um endereço `*.vercel.app`.
-3. **Painel online (Keystatic + GitHub)** — para editar pelo site publicado:
-   1. Na Vercel, em *Settings → Environment Variables*, crie `PUBLIC_KEYSTATIC_REPO` com o valor `GuilhermeAlvesVR/efata`.
-   2. Rode o projeto no computador com essa mesma variável em um arquivo `.env` (veja `.env.example`) e abra `/keystatic`.
-      O Keystatic vai oferecer **criar um GitHub App**. Siga as instruções; ao final ele preenche no `.env` as variáveis
-      `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`, `KEYSTATIC_SECRET` e `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`.
-   3. Copie essas quatro variáveis para a Vercel e faça um novo deploy.
-   4. Nas configurações do GitHub App, adicione a URL de callback do site publicado:
-      `https://www.efatavr.com.br/api/keystatic/github/oauth/callback`.
-   5. Quem for editar precisa de uma conta no GitHub com acesso ao repositório.
+Precisa do [Node.js](https://nodejs.org) 22 ou mais novo.
 
-   A partir daí, cada alteração salva em `https://www.efatavr.com.br/keystatic` vira um commit no GitHub,
-   e a Vercel republica o site sozinha em cerca de 1 minuto.
+```bash
+npm install
+npm run dev
+```
 
-4. **Domínio próprio (opcional)** — registre um domínio `.com.br` no [Registro.br](https://registro.br) (cerca de R$ 40/ano),
-   adicione-o na Vercel em *Settings → Domains* e defina a variável `SITE_URL` com o endereço final.
+O site abre em http://localhost:4321. Para editar o conteúdo, use o painel online: ele grava no GitHub.
+Antes de mexer no código, rode `git pull` para trazer as alterações feitas pelo painel.
+
+## Publicação
+
+- **Vercel** — o projeto `efata` na Vercel publica automaticamente a cada alteração na branch `main` do GitHub.
+- **Domínio** — `efatavr.com.br`, registrado no [Registro.br](https://registro.br), com DNS do próprio Registro.br
+  (registro A para a Vercel e CNAME `www` → `cname.vercel-dns.com`).
 
 ## Estrutura
 
 ```
-keystatic.config.ts   # campos do painel
-src/content/          # conteúdo salvo pelo painel
-src/lib/conteudo.ts   # leitura do conteúdo, datas, WhatsApp, Pix
-src/pages/            # páginas do site
-src/components/       # partes reutilizáveis (cabeçalho, cards, vídeo, mapa…)
-src/styles/global.css # cores e fontes da identidade visual
-src/assets/logo.jpeg  # logo (também gera o favicon e a imagem de compartilhamento)
+.pages.yml             # campos do painel Pages CMS
+src/content/           # conteúdo salvo pelo painel
+src/content.config.ts  # formato de cada tipo de conteúdo (precisa acompanhar o .pages.yml)
+src/lib/conteudo.ts    # leitura do conteúdo, datas, WhatsApp, Pix
+src/pages/             # páginas do site
+src/components/        # partes reutilizáveis (cabeçalho, cards, vídeo, mapa…)
+src/styles/global.css  # cores e fontes da identidade visual
+src/assets/logo.jpeg   # logo (também gera o favicon e a imagem de compartilhamento)
+public/images/         # imagens enviadas pelo painel
 ```
 
 Para mudar as cores, edite as variáveis no topo de `src/styles/global.css`.

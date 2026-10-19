@@ -1,9 +1,9 @@
 ---
 import QRCode from 'qrcode';
 import Base from '../layouts/Base.astro';
-import { reader, codigoPix } from '../lib/conteudo';
+import { contribua, codigoPix } from '../lib/conteudo';
 
-const dados = await reader.singletons.contribua.read();
+const dados = await contribua();
 const chave = dados?.pixChave?.trim() ?? '';
 const pix = chave ? codigoPix(chave, dados?.pixNome ?? '', dados?.pixCidade ?? '') : '';
 const qr = pix ? await QRCode.toString(pix, { type: 'svg', margin: 1, color: { dark: '#1b1817', light: '#ffffff' } }) : '';

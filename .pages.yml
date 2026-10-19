@@ -1,0 +1,180 @@
+# Configuração do painel Pages CMS (https://app.pagescms.org).
+# Os campos daqui precisam acompanhar os schemas de src/content.config.ts.
+
+media:
+  input: public/images
+  output: /images
+  categories: [image]
+  rename: safe
+
+settings:
+  commit:
+    # Mostra no histórico do GitHub o nome de quem editou pelo painel.
+    identity: user
+    templates:
+      create: "Painel: cria {path}"
+      update: "Painel: atualiza {path}"
+      delete: "Painel: apaga {path}"
+      rename: "Painel: renomeia {oldPath} para {newPath}"
+
+content:
+  - name: igreja
+    label: Igreja
+    type: group
+    items:
+      - name: configuracoes
+        label: Configurações gerais
+        type: file
+        path: src/content/configuracoes.yaml
+        format: yaml
+        fields:
+          - { name: nome, label: Nome da igreja, type: string, required: true }
+          - { name: slogan, label: Slogan, type: string }
+          - name: descricao
+            label: Descrição curta
+            description: Aparece no Google e quando alguém compartilha o link do site.
+            type: text
+          - { name: endereco, label: Endereço completo, type: text }
+          - name: whatsapp
+            label: WhatsApp
+            description: "Só números, com DDI e DDD. Ex.: 5524999998888. Deixe vazio para esconder o botão."
+            type: string
+          - { name: email, label: E-mail, type: string }
+          - { name: instagram, label: Instagram (link), type: string }
+          - { name: youtube, label: YouTube (link do canal), type: string }
+          - { name: facebook, label: Facebook (link), type: string }
+
+      - name: sobre
+        label: Quem somos
+        type: file
+        path: src/content/sobre.md
+        format: yaml-frontmatter
+        fields:
+          - { name: titulo, label: Título, type: string }
+          - { name: missao, label: Missão, type: text }
+          - { name: visao, label: Visão, type: text }
+          - { name: versiculo, label: Versículo de destaque (página inicial), type: text }
+          - { name: referencia, label: "Referência do versículo (ex.: 2 Crônicas 7:14)", type: string }
+          - name: body
+            label: Nossa história
+            type: rich-text
+            options: { format: markdown, media: false }
+
+      - name: cultos
+        label: Cultos
+        type: file
+        path: src/content/cultos.yaml
+        format: yaml
+        fields:
+          - name: horarios
+            label: Horários
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{dia} — {hora} {nome}"
+            fields:
+              - name: dia
+                label: Dia
+                type: select
+                required: true
+                options:
+                  values:
+                    - { name: domingo, label: Domingo }
+                    - { name: segunda, label: Segunda-feira }
+                    - { name: terca, label: Terça-feira }
+                    - { name: quarta, label: Quarta-feira }
+                    - { name: quinta, label: Quinta-feira }
+                    - { name: sexta, label: Sexta-feira }
+                    - { name: sabado, label: Sábado }
+              - { name: hora, label: "Horário (ex.: 19h30)", type: string, required: true }
+              - { name: nome, label: "Nome do culto (ex.: Culto da Família)", type: string }
+          - { name: observacao, label: Observação (opcional), type: text }
+
+      - name: contribua
+        label: Contribua (dízimos e ofertas)
+        type: file
+        path: src/content/contribua.yaml
+        format: yaml
+        fields:
+          - { name: texto, label: Texto de introdução, type: text }
+          - name: pixChave
+            label: Chave Pix
+            description: CNPJ, e-mail, telefone (+55...) ou chave aleatória. Deixe vazio para esconder o Pix.
+            type: string
+          - name: pixNome
+            label: Nome do recebedor (como aparece no banco)
+            description: Até 25 caracteres.
+            type: string
+          - { name: pixCidade, label: Cidade do recebedor, description: Até 15 caracteres., type: string }
+          - { name: banco, label: Dados bancários (opcional), type: text }
+
+      - name: lideranca
+        label: Liderança
+        type: collection
+        path: src/content/lideranca
+        format: yaml
+        filename: "{nome}.yaml"
+        exclude: [.gitkeep]
+        view: { primary: nome, fields: [nome, cargo], sort: [ordem, nome], default: { sort: ordem, order: asc } }
+        fields:
+          - { name: nome, label: Nome, type: string, required: true }
+          - { name: cargo, label: "Cargo (ex.: Pastor presidente)", type: string }
+          - { name: foto, label: Foto, type: image, options: { path: public/images/lideranca } }
+          - { name: ordem, label: Ordem de exibição, type: number, default: 1 }
+
+  - name: conteudo
+    label: Conteúdo
+    type: group
+    items:
+      - name: eventos
+        label: Eventos
+        type: collection
+        path: src/content/eventos
+        format: yaml-frontmatter
+        filename: "{titulo}-{data}.md"
+        view: { primary: titulo, fields: [titulo, data, horario], sort: [data, titulo], default: { sort: data, order: desc } }
+        fields:
+          - { name: titulo, label: Título, type: string, required: true }
+          - { name: data, label: Data, type: date, required: true, options: { format: yyyy-MM-dd } }
+          - { name: horario, label: "Horário (ex.: 19h30)", type: string }
+          - { name: local, label: Local (deixe vazio se for na igreja), type: string }
+          - { name: imagem, label: Cartaz / imagem, type: image, options: { path: public/images/eventos } }
+          - { name: resumo, label: Resumo (uma ou duas frases), type: text }
+          - name: body
+            label: Descrição completa
+            type: rich-text
+            options: { format: markdown, media: false }
+
+      - name: ministerios
+        label: Ministérios
+        type: collection
+        path: src/content/ministerios
+        format: yaml-frontmatter
+        filename: "{nome}.md"
+        view: { primary: nome, fields: [nome, lider], sort: [ordem, nome], default: { sort: ordem, order: asc } }
+        fields:
+          - { name: nome, label: Nome, type: string, required: true }
+          - { name: lider, label: Líder(es), type: string }
+          - { name: encontros, label: "Quando se reúne (ex.: Sábados, 16h)", type: string }
+          - { name: imagem, label: Imagem, type: image, options: { path: public/images/ministerios } }
+          - { name: resumo, label: Resumo (uma ou duas frases), type: text }
+          - { name: ordem, label: Ordem de exibição, type: number, default: 1 }
+          - name: body
+            label: Descrição completa
+            type: rich-text
+            options: { format: markdown, media: false }
+
+      - name: mensagens
+        label: Mensagens (pregações)
+        type: collection
+        path: src/content/mensagens
+        format: yaml
+        filename: "{titulo}.yaml"
+        view: { primary: titulo, fields: [titulo, pregador, data], sort: [data, titulo], default: { sort: data, order: desc } }
+        fields:
+          - { name: titulo, label: Título, type: string, required: true }
+          - { name: pregador, label: Pregador(a), type: string }
+          - { name: data, label: Data, type: date, required: true, options: { format: yyyy-MM-dd } }
+          - { name: youtube, label: Link do vídeo no YouTube, type: string, required: true }
+          - { name: resumo, label: Resumo (opcional), type: text }
