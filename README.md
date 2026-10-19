@@ -54,10 +54,10 @@ Campos deixados vazios simplesmente não aparecem no site (ex.: sem WhatsApp, o 
       `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`, `KEYSTATIC_SECRET` e `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`.
    3. Copie essas quatro variáveis para a Vercel e faça um novo deploy.
    4. Nas configurações do GitHub App, adicione a URL de callback do site publicado:
-      `https://SEU-SITE.vercel.app/api/keystatic/github/oauth/callback`.
+      `https://www.efatavr.com.br/api/keystatic/github/oauth/callback`.
    5. Quem for editar precisa de uma conta no GitHub com acesso ao repositório.
 
-   A partir daí, cada alteração salva em `https://SEU-SITE.vercel.app/keystatic` vira um commit no GitHub,
+   A partir daí, cada alteração salva em `https://www.efatavr.com.br/keystatic` vira um commit no GitHub,
    e a Vercel republica o site sozinha em cerca de 1 minuto.
 
 4. **Domínio próprio (opcional)** — registre um domínio `.com.br` no [Registro.br](https://registro.br) (cerca de R$ 40/ano),
