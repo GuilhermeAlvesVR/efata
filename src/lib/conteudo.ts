@@ -64,7 +64,13 @@ export async function eventos() {
   const todos = await reader.collections.eventos.all();
   return todos
     .filter((e) => e.entry.data)
-    .sort((a, b) => a.entry.data!.localeCompare(b.entry.data!));
+    .sort((a, b) => a.entry.data!.localeCompare(b.entry.data!) || minutos(a.entry.horario) - minutos(b.entry.horario));
+}
+
+/** "9h" → 540, "19h30" → 1170; sem horário vai para o fim do dia. */
+function minutos(horario = '') {
+  const m = horario.match(/(\d{1,2})\s*(?:h|:)\s*(\d{2})?/i);
+  return m ? Number(m[1]) * 60 + Number(m[2] ?? 0) : 24 * 60;
 }
 
 export async function mensagens() {
