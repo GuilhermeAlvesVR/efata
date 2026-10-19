@@ -26,7 +26,8 @@ Cada **Save** no painel grava a alteração no GitHub, e a Vercel republica o si
 
 | Seção | O que é |
 | --- | --- |
-| Configurações gerais | Nome, slogan, endereço, WhatsApp, e-mail, Instagram, YouTube, Facebook |
+| 🔴 Aviso ao vivo | Liga/desliga a faixa "Culto ao vivo agora" no topo do site, com link para o YouTube |
+| Configurações gerais | Nome, slogan, endereço, WhatsApp, e-mail, Instagram, YouTube, Facebook. O WhatsApp também recebe os pedidos de oração |
 | Quem somos | Missão, visão, versículo de destaque e a história do ministério |
 | Cultos | Dias e horários |
 | Contribua | Chave Pix (o QR Code é gerado sozinho) e dados bancários |
@@ -34,6 +35,7 @@ Cada **Save** no painel grava a alteração no GitHub, e a Vercel republica o si
 | Eventos | Agenda com cartaz. No dia aparece "É hoje!", e depois o evento vai para "Eventos anteriores" sozinho |
 | Ministérios | Louvor, jovens, kids etc. |
 | Mensagens | Pregações: basta colar o link do vídeo do YouTube |
+| Galeria de fotos | Álbuns com várias fotos. A primeira vira a capa; versões leves de cada foto são geradas na publicação |
 
 Campos deixados vazios simplesmente não aparecem no site (ex.: sem WhatsApp, o botão verde some).
 

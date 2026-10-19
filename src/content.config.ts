@@ -73,6 +73,15 @@ const contribua = defineCollection({
   }),
 });
 
+const aovivo = defineCollection({
+  loader: arquivo('aovivo.yaml'),
+  schema: z.object({
+    ativo: z.boolean().nullish().transform((v) => v ?? false),
+    texto: texto,
+    link: texto,
+  }),
+});
+
 const lideranca = defineCollection({
   loader: pasta('lideranca', 'yaml'),
   schema: z.object({ nome: z.string(), cargo: texto, foto: imagem, ordem }),
@@ -113,13 +122,29 @@ const mensagens = defineCollection({
   }),
 });
 
+const galeria = defineCollection({
+  loader: pasta('galeria', 'yaml'),
+  schema: z.object({
+    titulo: z.string(),
+    data,
+    descricao: texto,
+    // O painel grava uma lista de caminhos; aceita também uma foto só ou vazio.
+    fotos: z
+      .union([z.array(z.string().nullish()), z.string()])
+      .nullish()
+      .transform((v) => (Array.isArray(v) ? v : v ? [v] : []).filter((f): f is string => Boolean(f?.trim()))),
+  }),
+});
+
 export const collections = {
   configuracoes,
   sobre,
   cultos,
   contribua,
+  aovivo,
   lideranca,
   eventos,
   ministerios,
   mensagens,
+  galeria,
 };

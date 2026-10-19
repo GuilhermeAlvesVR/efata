@@ -1,0 +1,192 @@
+---
+import Base from '../../layouts/Base.astro';
+import { albuns, versaoDaFoto } from '../../lib/galeria';
+import { formatarData } from '../../lib/conteudo';
+
+export async function getStaticPaths() {
+  return (await albuns()).map((a) => ({ params: { slug: a.slug }, props: { album: a.entry } }));
+}
+
+const { album } = Astro.props;
+const total = album.fotos.length;
+---
+<Base titulo={album.titulo} descricao={album.descricao || `Fotos: ${album.titulo}`} imagem={versaoDaFoto(album.fotos[0], 'g')}>
+  <header class="cabecalho-pagina">
+    <div class="container">
+      <a href="/galeria" class="voltar">← Todos os álbuns</a>
+      <h1>{album.titulo}</h1>
+      <p>{formatarData(album.data)} · {total} {total === 1 ? 'foto' : 'fotos'}</p>
+      {album.descricao && <p class="descricao">{album.descricao}</p>}
+    </div>
+  </header>
+
+  <section class="secao">
+    <div class="container">
+      <ul class="fotos">
+        {
+          album.fotos.map((foto, i) => (
+            <li>
+              <a href={foto} data-grande={versaoDaFoto(foto, 'g')} data-indice={i} aria-label={`Abrir foto ${i + 1} de ${total}`}>
+                <img src={versaoDaFoto(foto, 'p')} alt="" loading={i < 8 ? 'eager' : 'lazy'} />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <dialog class="visor" aria-label="Visualizar foto">
+    <img class="visor__foto" alt="" />
+    <p class="visor__contador" aria-live="polite"></p>
+    <button class="visor__botao visor__fechar" type="button" aria-label="Fechar">✕</button>
+    <button class="visor__botao visor__anterior" type="button" aria-label="Foto anterior">‹</button>
+    <button class="visor__botao visor__proxima" type="button" aria-label="Próxima foto">›</button>
+  </dialog>
+</Base>
+
+<script>
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.fotos a')];
+  const visor = document.querySelector<HTMLDialogElement>('.visor')!;
+  const foto = visor.querySelector<HTMLImageElement>('.visor__foto')!;
+  const contador = visor.querySelector<HTMLElement>('.visor__contador')!;
+  let atual = 0;
+
+  function mostrar(i: number) {
+    atual = (i + links.length) % links.length;
+    foto.src = links[atual].dataset.grande!;
+    contador.textContent = `${atual + 1} de ${links.length}`;
+    // Pré-carrega a próxima para a troca ser instantânea.
+    new Image().src = links[(atual + 1) % links.length].dataset.grande!;
+  }
+
+  links.forEach((link, i) =>
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      mostrar(i);
+      visor.showModal();
+    })
+  );
+  visor.querySelector('.visor__fechar')!.addEventListener('click', () => visor.close());
+  visor.querySelector('.visor__anterior')!.addEventListener('click', () => mostrar(atual - 1));
+  visor.querySelector('.visor__proxima')!.addEventListener('click', () => mostrar(atual + 1));
+  visor.addEventListener('click', (e) => {
+    if (e.target === visor) visor.close();
+  });
+  visor.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') mostrar(atual - 1);
+    if (e.key === 'ArrowRight') mostrar(atual + 1);
+  });
+
+  // Deslizar o dedo para os lados troca de foto no celular.
+  let inicioX: number | null = null;
+  visor.addEventListener('touchstart', (e) => (inicioX = e.touches[0].clientX), { passive: true });
+  visor.addEventListener('touchend', (e) => {
+    if (inicioX === null) return;
+    const dx = e.changedTouches[0].clientX - inicioX;
+    if (Math.abs(dx) > 50) mostrar(atual + (dx < 0 ? 1 : -1));
+    inicioX = null;
+  });
+</script>
+
+<style>
+  .voltar {
+    display: inline-block;
+    margin-bottom: 16px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .descricao {
+    margin-top: 12px !important;
+  }
+  .fotos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(min(46%, 220px), 1fr));
+  }
+  .fotos a {
+    display: block;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 10px;
+    background: var(--linha);
+  }
+  .fotos img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.25s;
+  }
+  .fotos a:hover img {
+    transform: scale(1.04);
+  }
+
+  .visor {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgb(10 9 9 / 0.96);
+    color: #fff;
+  }
+  .visor::backdrop {
+    background: rgb(10 9 9 / 0.96);
+  }
+  .visor[open] {
+    display: grid;
+    place-items: center;
+  }
+  .visor__foto {
+    max-width: calc(100vw - 32px);
+    max-height: calc(100dvh - 96px);
+    object-fit: contain;
+  }
+  .visor__contador {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 16px;
+    margin: 0;
+    text-align: center;
+    font-size: 0.95rem;
+    opacity: 0.8;
+  }
+  .visor__botao {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.12);
+    color: #fff;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .visor__botao:hover {
+    background: rgb(255 255 255 / 0.25);
+  }
+  .visor__fechar {
+    top: 16px;
+    right: 16px;
+    font-size: 1.2rem;
+  }
+  .visor__anterior {
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .visor__proxima {
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+</style>

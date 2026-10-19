@@ -18,6 +18,22 @@ settings:
       rename: "Painel: renomeia {oldPath} para {newPath}"
 
 content:
+  - name: aovivo
+    label: "🔴 Aviso ao vivo"
+    type: file
+    path: src/content/aovivo.yaml
+    format: yaml
+    fields:
+      - name: ativo
+        label: Mostrar a faixa "ao vivo" no topo do site
+        description: Ligue quando a transmissão começar e desligue quando terminar. O site atualiza em cerca de 1 minuto.
+        type: boolean
+      - { name: texto, label: Texto da faixa, type: string, default: Culto ao vivo agora }
+      - name: link
+        label: Link da transmissão (opcional)
+        description: Deixe vazio para usar o canal do YouTube, que abre sozinho a transmissão que estiver ao vivo.
+        type: string
+
   - name: igreja
     label: Igreja
     type: group
@@ -164,6 +180,26 @@ content:
             label: Descrição completa
             type: rich-text
             options: { format: markdown, media: false }
+
+      - name: galeria
+        label: Galeria de fotos
+        type: collection
+        path: src/content/galeria
+        format: yaml
+        filename: "{titulo}-{data}.yaml"
+        exclude: [.gitkeep]
+        view: { primary: titulo, fields: [titulo, data], sort: [data, titulo], default: { sort: data, order: desc } }
+        fields:
+          - { name: titulo, label: Nome do álbum, type: string, required: true }
+          - { name: data, label: Data, type: date, required: true, options: { format: yyyy-MM-dd } }
+          - { name: descricao, label: Descrição (opcional), type: text }
+          - name: fotos
+            label: Fotos
+            description: Envie várias de uma vez. A primeira foto vira a capa do álbum.
+            type: image
+            options:
+              path: public/images/galeria
+              multiple: { max: 200 }
 
       - name: mensagens
         label: Mensagens (pregações)

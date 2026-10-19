@@ -15,6 +15,8 @@ const links = [
   { href: '/eventos', texto: 'Eventos' },
   { href: '/ministerios', texto: 'Ministérios' },
   { href: '/mensagens', texto: 'Mensagens' },
+  { href: '/galeria', texto: 'Galeria' },
+  { href: '/oracao', texto: 'Oração' },
   { href: '/contribua', texto: 'Contribua' },
 ];
 const ativo = (href: string) => (href === '/' ? atual === '/' : atual.startsWith(href));
@@ -121,7 +123,7 @@ const ativo = (href: string) => (href === '/' ? atual === '/' : atual.startsWith
     display: none;
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 1080px) {
     .menu-botao {
       display: grid;
       place-items: center;

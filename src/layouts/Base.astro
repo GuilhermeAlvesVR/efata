@@ -5,7 +5,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Icone from '../components/Icone.astro';
 import logo from '../assets/logo.jpeg';
-import { configuracoes, cultos, linkWhatsApp } from '../lib/conteudo';
+import { aoVivo, configuracoes, cultos, linkWhatsApp } from '../lib/conteudo';
 
 interface Props {
   titulo?: string;
@@ -14,6 +14,7 @@ interface Props {
 }
 const config = await configuracoes();
 const { horarios } = await cultos();
+const live = await aoVivo();
 const { titulo, descricao = config.descricao, imagem } = Astro.props;
 
 const tituloCompleto = titulo
@@ -57,6 +58,15 @@ const canonica = new URL(Astro.url.pathname, base).href;
   </head>
   <body>
     <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+    {
+      live && (
+        <a class="ao-vivo" href={live.link} target="_blank" rel="noopener">
+          <span class="ao-vivo__ponto" aria-hidden="true" />
+          <strong>{live.texto}</strong>
+          <span class="ao-vivo__acao">Assistir no YouTube →</span>
+        </a>
+      )
+    }
     <Header nome={config.nome} />
     <main id="conteudo">
       <slot />
@@ -91,6 +101,43 @@ const canonica = new URL(Astro.url.pathname, base).href;
   }
   .pular:focus {
     top: 12px;
+  }
+  .ao-vivo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 4px 12px;
+    padding: 10px 16px;
+    background: var(--vermelho);
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+  }
+  .ao-vivo:hover {
+    background: var(--vermelho-escuro);
+    color: #fff;
+  }
+  .ao-vivo__ponto {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    animation: piscar 1.2s ease-in-out infinite;
+  }
+  .ao-vivo__acao {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  @keyframes piscar {
+    50% {
+      opacity: 0.25;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ao-vivo__ponto {
+      animation: none;
+    }
   }
   .whatsapp-flutuante {
     position: fixed;

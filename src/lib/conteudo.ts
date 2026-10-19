@@ -29,6 +29,16 @@ export async function sobre() {
   return unico('sobre');
 }
 
+/** Faixa "ao vivo": sem link próprio, usa a página /live do canal, que abre a transmissão atual. */
+export async function aoVivo() {
+  const a = (await unico('aovivo'))?.entry;
+  if (!a?.ativo) return null;
+  const { youtube } = await configuracoes();
+  const canal = youtube.endsWith('/') ? youtube.slice(0, -1) : youtube;
+  const link = a.link || (canal ? `${canal}/live` : '');
+  return link ? { texto: a.texto || 'Culto ao vivo agora', link } : null;
+}
+
 export async function contribua() {
   return (await unico('contribua'))?.entry;
 }

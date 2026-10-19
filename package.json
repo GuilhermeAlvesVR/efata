@@ -12,7 +12,8 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
     "astro": "^7.4.0",
-    "qrcode": "^1.5.4"
+    "qrcode": "^1.5.4",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@types/qrcode": "^1.5.6",
